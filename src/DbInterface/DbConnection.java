@@ -1,4 +1,5 @@
 package DbInterface;
+
 import java.sql.*;
 
 public class DbConnection implements IDbConnection {
@@ -24,7 +25,7 @@ public class DbConnection implements IDbConnection {
 
     public static DbConnection getInstance() {
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://atabase-myshop.cucvzhullrus.us-east-1.rds.amazonaws.com/" + dbUser.getSchemaName() + "?serverTimezone=UTC", dbUser.getUserName(), dbUser.getPwd());
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dbUser.getSchemaName() + "?serverTimezone=UTC", dbUser.getUserName(), dbUser.getPwd());
         } catch (SQLException e) {
             System.out.println("SQL Exception: " + e.getMessage());
             System.out.println("SQL State: " + e.getSQLState());

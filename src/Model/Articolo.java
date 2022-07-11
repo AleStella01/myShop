@@ -1,52 +1,46 @@
 package Model;
 
+import Business.AbstractFactory.IArticolo;
+
 import java.util.List;
 
-public class Articolo implements IArticolo{
+public class Articolo implements IArticolo {
+
     protected Float prezzo;
-    private List<CommentoProdotto> commenti;
+    private List<Commento> commenti;
     protected String nome;
+    protected String categoria;
     protected int id;
-    protected String descrizione;
 
-
-    @Override
-    public String getNome() {
-        return nome;
-    }
-
-    @Override
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public Float getPrezzo() {
+/*    public Float getPrezzo() {
         return prezzo;
-    }
+    }*/
 
-    @Override
     public void setPrezzo(Float prezzo) {
         this.prezzo = prezzo;
     }
 
-    @Override
-    public String getDescrizione() {
-        return descrizione;
+    public String getNome() {
+        return nome;
     }
 
-    @Override
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

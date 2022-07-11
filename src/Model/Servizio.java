@@ -1,4 +1,5 @@
 package Model;
 
-public class Servizio extends Articolo{
+public class Servizio extends Articolo {
+
 }

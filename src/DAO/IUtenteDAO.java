@@ -1,13 +1,13 @@
 package DAO;
 
-import Model.IUtente;
+import Model.Utente;
 
 import java.util.ArrayList;
 
 public interface IUtenteDAO {
-    IUtente findById(String Username);
-    ArrayList<IUtente> findAll();
-    int add(IUtente utente);
-    int removeById(String username);
-    int update(IUtente utente);
+    Utente findById(String email);
+    ArrayList<Utente> findAll();
+    int add(Utente utente);
+    int removeById(String email);
+    int update(Utente utente);
 }

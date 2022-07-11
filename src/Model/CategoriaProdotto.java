@@ -1,10 +1,14 @@
 package Model;
 
+import Business.AbstractFactory.ICategoria;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoriaProdotto implements ICategoria{
+public class CategoriaProdotto implements ICategoria {
+
     private String nome;
+
     private List<CategoriaProdotto> sottocategorie;
 
     public CategoriaProdotto() {
@@ -12,24 +16,27 @@ public class CategoriaProdotto implements ICategoria{
 
     public CategoriaProdotto(String nome) {
         this.nome = nome;
-        sottocategorie = new ArrayList<>();
-    }
-
-    public String getNome() {
-        return nome;
+        this.sottocategorie = new ArrayList<CategoriaProdotto>();
     }
 
     public List<CategoriaProdotto> getSottocategorie() {
         return sottocategorie;
     }
 
-    public void add(CategoriaProdotto categoria){
-        sottocategorie.add(categoria);
+    public void aggiungiSottocategoria(CategoriaProdotto c) {
+        sottocategorie.add(c);
     }
 
-    public void add(List<CategoriaProdotto> categorie){
-        sottocategorie.addAll(categorie);
+    public void aggiungiSottocategoria(List<CategoriaProdotto> c) {
+        sottocategorie.addAll(c);
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
 }

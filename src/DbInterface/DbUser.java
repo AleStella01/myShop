@@ -1,5 +1,6 @@
 package DbInterface;
 
+
 public class DbUser {
     private static DbUser instance = new DbUser();
     private String schemaName;
@@ -8,8 +9,8 @@ public class DbUser {
 
     private DbUser() {
         userName = "root";
-        pwd = "AleSSAndro.B_01-J";
-        schemaName = "myShop";
+        pwd = "12342567Nico.";
+        schemaName = "myshop1";
     }
 
     public static DbUser getInstance() {
@@ -27,4 +28,6 @@ public class DbUser {
     public String getPwd() {
         return pwd;
     }
+
+
 }

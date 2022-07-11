@@ -1,5 +1,8 @@
 package Model;
 
-public class CategoriaServizio implements ICategoria{
+import Business.AbstractFactory.ICategoria;
+
+public class CategoriaServizio implements ICategoria {
+
     private String nome;
 }

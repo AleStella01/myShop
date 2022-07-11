@@ -1,48 +1,64 @@
 package Model;
 
-public abstract class Commento {
-    protected int numeroStelle;
-    protected String testo;
-    private boolean risposto;
-    private String testoRisposta;
+import java.util.Date;
 
-    public Commento() {
+public class Commento {
+
+    public enum Punteggio { SCARSO, MEDIOCRE, BUONO, ECCELLENTE }
+
+    private int id;
+    private Punteggio punteggio;
+    private String openText;
+    private boolean letto;
+    //private boolean risposto;
+    private Risposta risposta;
+    private Date data;
+
+    public int getId() {
+        return id;
     }
 
-    public Commento(int numeroStelle, String testo) {
-        this.numeroStelle = numeroStelle;
-        this.testo = testo;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getNumeroStelle() {
-        return numeroStelle;
+    public Punteggio getPunteggio() {
+        return punteggio;
     }
 
-    public void setNumeroStelle(int numeroStelle) {
-        this.numeroStelle = numeroStelle;
+    public void setPunteggio(Punteggio punteggio) {
+        this.punteggio = punteggio;
     }
 
-    public String getTesto() {
-        return testo;
+    public String getOpenText() {
+        return openText;
     }
 
-    public void setTesto(String testo) {
-        this.testo = testo;
+    public void setOpenText(String openText) {
+        this.openText = openText;
     }
 
-    public boolean isRisposto() {
-        return risposto;
+    public boolean isLetto() {
+        return letto;
     }
 
-    public void setRisposto(boolean risposto) {
-        this.risposto = risposto;
+    public void setLetto(boolean letto) {
+        this.letto = letto;
     }
 
-    public String getTestoRisposta() {
-        return testoRisposta;
+    public Risposta getRisposta() {
+        return risposta;
     }
 
-    public void setTestoRisposta(String testoRisposta) {
-        this.testoRisposta = testoRisposta;
+    public void setRisposta(Risposta risposta) {
+        this.risposta = risposta;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
     }
 }

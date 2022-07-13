@@ -1,4 +1,4 @@
 package Model;
 
-public class CollocazioneProdotto{
+public class CollocazioneProdotto extends Collocazione{
 }

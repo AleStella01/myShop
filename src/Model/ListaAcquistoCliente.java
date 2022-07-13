@@ -60,4 +60,6 @@ public class ListaAcquistoCliente extends ListaAcquisto{
     public void aggiungiProdotto(Prodotto prodotto, int quantita){
         prodotti.put(prodotto, quantita);
     }
+
+
 }

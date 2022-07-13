@@ -2,7 +2,7 @@ package Model;
 
 public class Prodotto extends Articolo implements IProdotto{
     private CollocazioneProdotto collocazione;
-    private Produttore produttore;
+    private ProduttoreMobili produttore;
     private int quantita;
 
 

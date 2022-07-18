@@ -3,10 +3,12 @@ package Model;
 public abstract class Collocazione {
     protected String corsia;
     protected int scaffale;
+    protected int id;
 
     public Collocazione() {
         this.corsia = null;
         this.scaffale = 0;
+        this.id = 0;
     }
 
     public Collocazione(String corsia, int scaffale) {
@@ -28,5 +30,13 @@ public abstract class Collocazione {
 
     public void setScaffale(int scaffale) {
         this.scaffale = scaffale;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

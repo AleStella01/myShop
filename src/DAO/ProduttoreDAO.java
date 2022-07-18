@@ -92,7 +92,7 @@ public class ProduttoreDAO implements IProduttoreDAO{
     @Override
     public int add(IProduttore produttore) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.produttore (idproduttore, nome, sitoWeb, nazione, citta) VALUES ('" + produttore.getId() + "','" + produttore.getNomeProduttore() + "','" + produttore.getSitoWeb() + "','" + produttore.getNazione() + "','" + produttore.getCitta() + "');";
+        String sql = "INSERT INTO myShop.produttore (nome, sitoWeb, nazione, citta) VALUES ('" + produttore.getNomeProduttore() + "','" + produttore.getSitoWeb() + "','" + produttore.getNazione() + "','" + produttore.getCitta() + "');";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
 

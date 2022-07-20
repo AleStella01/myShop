@@ -4,6 +4,7 @@ public abstract class Notifica {
     protected String msg;
     protected IUtente cliente;
     protected IUtente manager;
+    protected int id;
 
     public String getMsg() {
         return msg;
@@ -29,5 +30,14 @@ public abstract class Notifica {
         this.manager = manager;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public abstract boolean inviaNotifica();
+
 }

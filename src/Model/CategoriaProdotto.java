@@ -6,6 +6,7 @@ import java.util.List;
 public class CategoriaProdotto implements ICategoria{
     private String nome;
     private List<CategoriaProdotto> sottocategorie;
+    private int id;
 
     public CategoriaProdotto() {
     }
@@ -32,4 +33,8 @@ public class CategoriaProdotto implements ICategoria{
     }
 
 
+    @Override
+    public int getId() {
+        return id;
+    }
 }

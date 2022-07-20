@@ -2,6 +2,7 @@ package Model;
 
 public class CategoriaServizio implements ICategoria{
     private String nome;
+    private int id;
 
     public CategoriaServizio() {
         this.nome = null;
@@ -17,5 +18,10 @@ public class CategoriaServizio implements ICategoria{
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 }

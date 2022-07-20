@@ -21,4 +21,6 @@ public interface IUtente {
     String getUsername();
     String getEmail();
     String getPassword();
+    int getId();
+    void setId(int id);
 }

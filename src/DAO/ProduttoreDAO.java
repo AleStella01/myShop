@@ -150,4 +150,35 @@ public class ProduttoreDAO implements IProduttoreDAO{
 
         return 0;
     }
+
+    public IProduttore findById(int id) {
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "SELECT idproduttore, nome, sitoWeb, nazione, citta FROM myShop.produttore WHERE idproduttore = '" + id + "';";
+        IDbOperation readOp = new ReadOperation(sql);
+        rs = executor.executeOperation(readOp).getResultSet();
+
+        try {
+            rs.next();
+            if (rs.getRow() == 1){
+                ProduttoreFactoryProvider.ProduttoreType type = ProduttoreFactoryProvider.ProduttoreType.PRODUTTORE_MOBILI;
+                ProduttoreAbstractFactory factory = ProduttoreFactoryProvider.getFactory(type);
+                produttore = factory.crea();
+
+                produttore.setId(rs.getInt("idproduttore"));
+                produttore.setNomeProduttore(rs.getString("nome"));
+                produttore.setSitoWeb(rs.getString("sitoWeb"));
+                produttore.setNazione(rs.getString("nazione"));
+                produttore.setCitta(rs.getString("citta"));
+
+                return produttore;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return null;
+    }
 }

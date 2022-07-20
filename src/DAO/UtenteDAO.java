@@ -60,6 +60,42 @@ public class UtenteDAO implements IUtenteDAO{
 
         return null;
     }
+    public IUtente findById(int id) {
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "SELECT nome, cognome, codiceFiscale, dataNascita, citta, indirizzo, username, password, email, tipo FROM myShop.utente WHERE idutente = '" + id + "';";
+        IDbOperation readOp = new ReadOperation(sql);
+        rs = executor.executeOperation(readOp).getResultSet();
+
+        try {
+            rs.next();
+            if (rs.getRow() == 1) {
+                UtenteFactoryProvider.UserType type = (UtenteFactoryProvider.UserType) rs.getObject("tipo");
+                UtenteAbstractFactory factory = UtenteFactoryProvider.getFactory(type);
+                utente = factory.creaUtente();
+
+                utente.setNome(rs.getString("nome"));
+                utente.setCognome(rs.getString("cognome"));
+                utente.setCodiceFiscale(rs.getString("codiceFiscale"));
+                utente.setDataNascita(rs.getDate("dataNascita"));
+                utente.setCitta(rs.getString("citta"));
+                utente.setIndirizzo(rs.getString("indirizzo"));
+                utente.setEmail(rs.getString("email"));
+                utente.setUsername(rs.getString("username"));
+                utente.setPassword(rs.getString("password"));
+                return utente;
+            }
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+            System.out.println("SQLState: " + e.getSQLState());
+            System.out.println("VendorError: " + e.getErrorCode());
+        } catch (NullPointerException e) {
+            System.out.println("ResultSet: " + e.getMessage());
+        } finally {
+            connection.close();
+        }
+
+        return null;
+    }
 
     @Override
     public ArrayList<IUtente> findAll() {

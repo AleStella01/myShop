@@ -1,9 +1,6 @@
 package DAO;
 
-import DbInterface.DbOperationExecutor;
-import DbInterface.IDbConnection;
-import DbInterface.IDbOperation;
-import DbInterface.ReadOperation;
+import DbInterface.*;
 import Model.*;
 
 import java.sql.ResultSet;
@@ -22,7 +19,7 @@ public class ProdottoDAO implements IArticoloDAO{
         rs = null;
     }
 
-    public ProdottoDAO getInstance() {
+    public static ProdottoDAO getInstance() {
         return instance;
     }
 
@@ -97,16 +94,67 @@ public class ProdottoDAO implements IArticoloDAO{
 
     @Override
     public int add(IArticolo articolo) {
+        IProdotto prodotto1 = (IProdotto) articolo;
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "INSERT INTO myShop.prodotto (nome, costo, descrizione, categoria_idcategoria, collocazione_idcollocazione, produttore_idproduttore) VALUES ('" + articolo.getNome() + "', '" + articolo.getPrezzo() + "', '" + articolo.getDescrizione() + "', '" + articolo.getCategoria().getId() + "', '" + prodotto1.getCollocazione().getId() + "', '" + prodotto1.getProduttore().getId() + "');";
+        IDbOperation writeOp = new WriteOperation(sql);
+        rs = executor.executeOperation(writeOp).getResultSet();
+        int rowCount = 0;
+        try {
+            rowCount = rs.getRow();
+            return rowCount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
         return 0;
     }
 
     @Override
     public int removeById(int id) {
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "DELETE FROM myShop.prodotto WHERE idprodotto = '" + id + "';";
+        IDbOperation writeOp = new WriteOperation(sql);
+        rs = executor.executeOperation(writeOp).getResultSet();
+        int rowCount = 0;
+        try {
+            rowCount = rs.getRow();
+            return rowCount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
         return 0;
     }
 
     @Override
     public int update(IArticolo articolo) {
+        IProdotto prodotto1 = (IProdotto) articolo;
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "UPDATE myShop.prodotto SET nome = '" + articolo.getNome() + "', costo = '" + articolo.getPrezzo() + "', descrizione = '" + articolo.getDescrizione() + "', categoria_idcategoria = '" + articolo.getCategoria().getId() + "', collocazione_idcollocazione = '" + prodotto1.getCollocazione().getId() + "', produttore_idproduttore = '" + prodotto1.getProduttore().getId() +"' WHERE idprodotto = '" + articolo.getId() + "';";
+        IDbOperation writeOp = new WriteOperation(sql);
+        rs = executor.executeOperation(writeOp).getResultSet();
+
+        int rowCount = 0;
+        try {
+            rowCount = rs.getRow();
+            return rowCount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
         return 0;
     }
 

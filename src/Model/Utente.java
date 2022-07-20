@@ -12,6 +12,7 @@ public class Utente implements IUtente{
     protected String username;
     protected String email;
     protected String password;
+    protected int id;
 
     public Utente() {
     }
@@ -110,6 +111,16 @@ public class Utente implements IUtente{
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

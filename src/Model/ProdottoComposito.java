@@ -6,6 +6,8 @@ import java.util.List;
 public class ProdottoComposito extends Articolo implements IProdotto{
     private final List<IProdotto> sottoprodotti = new ArrayList<>();
     CollocazioneProdotto collocazione = new CollocazioneProdotto();
+    ICategoria categoria;
+    IProduttore produttore;
 
     public void add(IProdotto prodotto){
         sottoprodotti.add(prodotto);
@@ -23,5 +25,32 @@ public class ProdottoComposito extends Articolo implements IProdotto{
     @Override
     public String getNome() {
         return this.nome;
+    }
+
+    @Override
+    public IProduttore getProduttore() {
+        return produttore;
+    }
+
+    @Override
+    public CollocazioneProdotto getCollocazione() {
+        return null;
+    }
+
+    @Override
+    public ICategoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(ICategoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public void setProduttore(IProduttore produttore) {
+        this.produttore = produttore;
+    }
+
+    public List<IProdotto> getSottoprodotti(){
+        return sottoprodotti;
     }
 }

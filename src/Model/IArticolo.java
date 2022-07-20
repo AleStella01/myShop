@@ -9,4 +9,5 @@ public interface IArticolo {
     void setPrezzo(Float prezzo);
     String getDescrizione();
     void setDescrizione(String descrizione);
+    ICategoria getCategoria();
 }

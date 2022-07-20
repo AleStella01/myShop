@@ -21,6 +21,10 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
         rs = null;
     }
 
+    public static ProdottoCompositoDAO getInstance(){
+        return instance;
+    }
+
     @Override
     public IArticolo findByName(String nome) {
         DbOperationExecutor executor = new DbOperationExecutor();

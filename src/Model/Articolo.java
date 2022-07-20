@@ -49,4 +49,9 @@ public class Articolo implements IArticolo{
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
+
+    @Override
+    public ICategoria getCategoria() {
+        return null;
+    }
 }

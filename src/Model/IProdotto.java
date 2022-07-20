@@ -5,4 +5,5 @@ public interface IProdotto {
     String getNome();
     IProduttore getProduttore();
     CollocazioneProdotto getCollocazione();
+    int getId();
 }

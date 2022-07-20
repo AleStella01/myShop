@@ -11,6 +11,8 @@ public interface ICategoriaDAO {
     int removeById(int id);
     int update(ICategoria categoria);
     ICategoria findById(int id);
-    ArrayList<ICategoria> findSottoCategorie(ICategoria categoria);
-    ArrayList<ICategoria> findSuperCategorie(ICategoria categoria);
+    int addSubCategoria(ICategoria categoria, ICategoria subcategoria);
+    int addSuperCategoria(ICategoria categoria, ICategoria superCategoria);
+    int removeSubCategoria(ICategoria categoria, ICategoria subcategoria);
+    int removeSuperCategoria(ICategoria categoria, ICategoria superCategoria);
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CategoriaProdotto implements ICategoria{
     private String nome;
-    private List<CategoriaProdotto> sottocategorie;
+    private List<ICategoria> sottocategorie;
     private int id;
 
     public CategoriaProdotto() {
@@ -16,19 +16,29 @@ public class CategoriaProdotto implements ICategoria{
         sottocategorie = new ArrayList<>();
     }
 
+    @Override
     public String getNome() {
         return nome;
     }
 
-    public List<CategoriaProdotto> getSottocategorie() {
+    @Override
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+
+    @Override
+    public List<ICategoria> getSottocategorie() {
         return sottocategorie;
     }
 
-    public void add(CategoriaProdotto categoria){
+    @Override
+    public void add(ICategoria categoria){
         sottocategorie.add(categoria);
     }
 
-    public void add(List<CategoriaProdotto> categorie){
+    @Override
+    public void add(List<ICategoria> categorie){
         sottocategorie.addAll(categorie);
     }
 
@@ -37,4 +47,15 @@ public class CategoriaProdotto implements ICategoria{
     public int getId() {
         return id;
     }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getTipo() {
+        return "PRODOTTO";
+    }
+
 }

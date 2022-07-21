@@ -22,10 +22,10 @@ public class DocumentoListaAcquisto extends Documento{
 
     @Override
     public void invia(String indirizzo) {
-        Map<Prodotto, Integer> prodotti = listaAcquisto.getProdotti();
+        Map<IProdotto, Integer> prodotti = listaAcquisto.getProdotti();
         String text = "";
 
-        Iterator<Prodotto> i = prodotti.keySet().iterator();
+        Iterator<IProdotto> i = prodotti.keySet().iterator();
         while (i.hasNext()){
             IProdotto p = i.next();
             text += p.getNome() + ", ";

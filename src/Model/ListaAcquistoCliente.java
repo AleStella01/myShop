@@ -6,43 +6,41 @@ import java.util.List;
 import java.util.Map;
 
 public class ListaAcquistoCliente extends ListaAcquisto{
-    private Cliente cliente;
-    private PuntoVendita puntoVendita;
-    private Map<Prodotto, Integer> prodotti;
     private String indirizzoSpedizione;
-    private List<Servizio> servizi;
+    private List<IArticolo> servizi;
 
     public ListaAcquistoCliente() {
         prodotti = new HashMap<>();
         servizi = new ArrayList<>();
     }
 
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public PuntoVendita getPuntoVendita() {
-        return puntoVendita;
-    }
-
-    public Map<Prodotto, Integer> getProdotti() {
+    public Map<IProdotto, Integer> getProdotti() {
         return prodotti;
     }
 
+    @Override
+    public void addProdotto(IProdotto prodotto, int quantita) {
+        prodotti.put(prodotto, quantita);
+    }
+
+    @Override
+    public void addServizio(IArticolo servizio) {
+        servizi.add(servizio);
+    }
+
+    @Override
+    public void addSpedizione(String indirizzo) {
+        indirizzoSpedizione = indirizzo;
+    }
+
+    @Override
     public String getIndirizzoSpedizione() {
         return indirizzoSpedizione;
     }
 
-    public List<Servizio> getServizi() {
+    @Override
+    public List<IArticolo> getServizi() {
         return servizi;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public void setPuntoVendita(PuntoVendita puntoVendita) {
-        this.puntoVendita = puntoVendita;
     }
 
     public void setIndirizzoSpedizione(String indirizzoSpedizione) {

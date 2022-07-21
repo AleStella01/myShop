@@ -21,7 +21,7 @@ public class ServizioDAO implements IArticoloDAO{
         rs = null;
     }
 
-    public ServizioDAO getInstance() {
+    public static ServizioDAO getInstance() {
         return instance;
     }
 

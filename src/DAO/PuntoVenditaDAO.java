@@ -19,7 +19,7 @@ public class PuntoVenditaDAO implements IPuntoVenditaDAO{
         rs = null;
     }
 
-    public PuntoVenditaDAO getInstance(){
+    public static PuntoVenditaDAO getInstance(){
         return instance;
     }
 

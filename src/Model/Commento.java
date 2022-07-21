@@ -1,10 +1,11 @@
 package Model;
 
 public abstract class Commento {
+    protected int id;
     protected int numeroStelle;
     protected String testo;
-    private boolean risposto;
-    private String testoRisposta;
+    protected boolean risposto;
+    protected String testoRisposta;
 
     public Commento() {
     }
@@ -45,4 +46,17 @@ public abstract class Commento {
     public void setTestoRisposta(String testoRisposta) {
         this.testoRisposta = testoRisposta;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public abstract IUtente getCliente();
+    public abstract void setCliente(IUtente cliente);
+    public abstract ListaAcquisto getListaAcquisto();
+    public abstract void setListaAcquisto(ListaAcquisto listaAcquisto);
 }

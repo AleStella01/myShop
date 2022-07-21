@@ -1,8 +1,8 @@
 package Model;
 
 public class CommentoProdotto extends Commento {
-    private Cliente cliente;
-    private ListaAcquistoCliente listaAcquisto;
+    private IUtente cliente;
+    private ListaAcquisto listaAcquisto;
 
     public CommentoProdotto() {
     }
@@ -13,19 +13,23 @@ public class CommentoProdotto extends Commento {
         this.listaAcquisto = listaAcquisto;
     }
 
-    public Cliente getCliente() {
+    @Override
+    public IUtente getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    @Override
+    public void setCliente(IUtente cliente) {
         this.cliente = cliente;
     }
 
-    public ListaAcquistoCliente getListaAcquisto() {
+    @Override
+    public ListaAcquisto getListaAcquisto() {
         return listaAcquisto;
     }
 
-    public void setListaAcquisto(ListaAcquistoCliente listaAcquisto) {
+    @Override
+    public void setListaAcquisto(ListaAcquisto listaAcquisto) {
         this.listaAcquisto = listaAcquisto;
     }
 }

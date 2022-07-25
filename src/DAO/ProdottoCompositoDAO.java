@@ -36,7 +36,7 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
             ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
             prodottoComposito = (ProdottoComposito) factory.crea();
             while (rs.next()){
-                IArticoloDAO prodottoDAO = new ProdottoDAO();
+                IArticoloDAO prodottoDAO = ProdottoDAO.getInstance();
                 IProdotto prodotto = (IProdotto) prodottoDAO.findById(rs.getInt("prodotto_idprodotto1"));
                 prodottoComposito.add(prodotto);
                 prodottoComposito.setNome(rs.getString("nomeProdottoComposito"));
@@ -184,7 +184,7 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
             ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
             prodottoComposito = (ProdottoComposito) factory.crea();
             while (rs.next()){
-                IArticoloDAO prodottoDAO = new ProdottoDAO();
+                IArticoloDAO prodottoDAO = ProdottoDAO.getInstance();
                 IProdotto prodotto = (IProdotto) prodottoDAO.findById(rs.getInt("prodotto_idprodotto1"));
                 prodottoComposito.add(prodotto);
                 prodottoComposito.setNome(rs.getString("nomeProdottoComposito"));

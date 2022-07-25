@@ -59,5 +59,15 @@ public class ListaAcquistoCliente extends ListaAcquisto{
         prodotti.put(prodotto, quantita);
     }
 
-
+    @Override
+    public String toString() {
+        return "ListaAcquistoCliente{" +
+                "id=" + id +
+                ", cliente=" + cliente +
+                ", puntoVendita=" + puntoVendita +
+                ", prodotti=" + prodotti +
+                ", indirizzoSpedizione='" + indirizzoSpedizione + '\'' +
+                ", servizi=" + servizi +
+                '}';
+    }
 }

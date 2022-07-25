@@ -68,5 +68,16 @@ public class ProduttoreMobili implements IProduttore {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "ProduttoreMobili{" +
+                "id=" + id +
+                ", nomeProduttore='" + nomeProduttore + '\'' +
+                ", sitoWeb='" + sitoWeb + '\'' +
+                ", nazione='" + nazione + '\'' +
+                ", citta='" + citta + '\'' +
+                '}';
+    }
 }
 

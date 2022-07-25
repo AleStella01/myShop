@@ -1,5 +1,6 @@
 package Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriaServizio implements ICategoria{
@@ -9,6 +10,7 @@ public class CategoriaServizio implements ICategoria{
 
     public CategoriaServizio() {
         this.nome = null;
+        sottocategorie = new ArrayList<>();
     }
 
     public CategoriaServizio(String nome) {
@@ -52,5 +54,14 @@ public class CategoriaServizio implements ICategoria{
     @Override
     public String getTipo() {
         return "SERVIZIO";
+    }
+
+    @Override
+    public String toString() {
+        return "CategoriaServizio{" +
+                "nome='" + nome + '\'' +
+                ", id=" + id +
+                ", sottocategorie=" + sottocategorie +
+                '}';
     }
 }

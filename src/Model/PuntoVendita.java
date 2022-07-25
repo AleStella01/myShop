@@ -85,4 +85,16 @@ public class PuntoVendita implements IPuntoVendita {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "PuntoVendita{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", citta='" + citta + '\'' +
+                ", indirizzo='" + indirizzo + '\'' +
+                ", manager=" + manager +
+                ", prodottiVenduti=" + prodottiVenduti +
+                '}';
+    }
 }

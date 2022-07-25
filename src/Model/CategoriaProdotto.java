@@ -9,6 +9,7 @@ public class CategoriaProdotto implements ICategoria{
     private int id;
 
     public CategoriaProdotto() {
+        sottocategorie = new ArrayList<>();
     }
 
     public CategoriaProdotto(String nome) {
@@ -58,4 +59,13 @@ public class CategoriaProdotto implements ICategoria{
         return "PRODOTTO";
     }
 
+    @Override
+    public String toString() {
+        for (ICategoria c : sottocategorie)
+            System.out.println(c);
+        return "CategoriaProdotto{" +
+                "nome='" + nome + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

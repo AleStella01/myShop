@@ -12,16 +12,16 @@ import java.util.ArrayList;
 public class MessaggioDAO implements IMessaggioDAO{
     private static MessaggioDAO instance = new MessaggioDAO();
     private Notifica notifica;
-    private static IDbConnection connection;
+    //private static IDbConnection connection;
     private static ResultSet rs;
 
     private MessaggioDAO() {
         notifica = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
-    public  MessaggioDAO getInstance(){
+    public static MessaggioDAO getInstance(){
         return instance;
     }
 
@@ -50,10 +50,7 @@ public class MessaggioDAO implements IMessaggioDAO{
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
-
         return null;
     }
 
@@ -83,8 +80,6 @@ public class MessaggioDAO implements IMessaggioDAO{
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
 
         return null;
@@ -93,7 +88,7 @@ public class MessaggioDAO implements IMessaggioDAO{
     @Override
     public ArrayList<Notifica> findByCliente(IUtente utente) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idmessaggio, testo, cliente_idcliente, manager_idmanager FROM myShop.messaggio WHERE cliente_idcliente = '" + utente .getId() + ";";
+        String sql = "SELECT idmessaggio, testo, cliente_idcliente, manager_idmanager FROM myShop.messaggio WHERE cliente_idcliente = " + utente .getId() + ";";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -116,8 +111,6 @@ public class MessaggioDAO implements IMessaggioDAO{
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
         return null;
     }
@@ -125,7 +118,7 @@ public class MessaggioDAO implements IMessaggioDAO{
     @Override
     public ArrayList<Notifica> findByManager(IUtente utente) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idmessaggio, testo, cliente_idcliente, manager_idmanager FROM myShop.messaggio WHERE manager_idmanager = '" + utente .getId() + ";";
+        String sql = "SELECT idmessaggio, testo, cliente_idcliente, manager_idmanager FROM myShop.messaggio WHERE manager_idmanager = " + utente .getId() + ";";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -148,8 +141,6 @@ public class MessaggioDAO implements IMessaggioDAO{
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
         return null;
     }
@@ -157,21 +148,21 @@ public class MessaggioDAO implements IMessaggioDAO{
     @Override
     public int add(Notifica notifica) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.messaggio (testo, cliente_idcliente, manager_idmanager) VALUES ('" + notifica.getMsg() + "', '" + notifica.getCliente().getId() + "', '" + notifica.getManager().getId() + "');";
+        String sql = "INSERT INTO myShop.messaggio (testo, cliente_idcliente, manager_idmanager) VALUES ('" + notifica.getMsg() + "', " + notifica.getCliente().getId() + ", " + notifica.getManager().getId() + ");";
         IDbOperation writeOp = new WriteOperation(sql);
-        rs = executor.executeOperation(writeOp).getResultSet();
-        int rowCount = 0;
+        DbOperationResult result = executor.executeOperation(writeOp);
+
         try {
-            rowCount = rs.getRow();
-            return rowCount;
+            if (result.getRowsAffected() == 0)
+                throw new SQLException("SQL Error!");
+            else
+                return result.getRowsAffected();
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
             System.out.println("SQLState: " + e.getSQLState());
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e){
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
 
         return 0;
@@ -180,7 +171,7 @@ public class MessaggioDAO implements IMessaggioDAO{
     @Override
     public int removeById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "DELETE FROM myShop.messaggio WHERE idmessaggio = '" + id + "';";
+        String sql = "DELETE FROM myShop.messaggio WHERE idmessaggio = " + id + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try{
@@ -192,8 +183,6 @@ public class MessaggioDAO implements IMessaggioDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -213,8 +202,6 @@ public class MessaggioDAO implements IMessaggioDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }

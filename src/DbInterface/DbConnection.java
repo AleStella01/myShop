@@ -15,6 +15,7 @@ public class DbConnection implements IDbConnection {
         rs = null;
         rowCount = 0;
         try {
+            // "com.mysql.cj.jdbc.Driver"
             Class cls = Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Ho caricato la classe di nome: " + cls.getName());
         } catch (ClassNotFoundException e) {
@@ -24,7 +25,7 @@ public class DbConnection implements IDbConnection {
 
     public static DbConnection getInstance() {
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://atabase-myshop.cucvzhullrus.us-east-1.rds.amazonaws.com/" + dbUser.getSchemaName() + "?serverTimezone=UTC", dbUser.getUserName(), dbUser.getPwd());
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/" + dbUser.getSchemaName() + "?serverTimezone=UTC", dbUser.getUserName(), dbUser.getPwd());
         } catch (SQLException e) {
             System.out.println("SQL Exception: " + e.getMessage());
             System.out.println("SQL State: " + e.getSQLState());

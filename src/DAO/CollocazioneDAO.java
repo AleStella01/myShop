@@ -11,12 +11,12 @@ import java.util.ArrayList;
 public class CollocazioneDAO implements ICollocazioneDAO{
     private static CollocazioneDAO instance = new CollocazioneDAO();
     private Collocazione collocazione;
-    private static DbConnection connection;
+    //private static DbConnection connection;
     private static ResultSet rs;
 
     public CollocazioneDAO() {
         collocazione = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -46,9 +46,7 @@ public class CollocazioneDAO implements ICollocazioneDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return null;
@@ -78,9 +76,7 @@ public class CollocazioneDAO implements ICollocazioneDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return null;
@@ -89,20 +85,21 @@ public class CollocazioneDAO implements ICollocazioneDAO{
     @Override
     public int add(Collocazione collocazione) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.collocazione (corsia, numeroScaffale) VALUES ('"+ collocazione.getCorsia() +"', " + collocazione.getScaffale() +"';)";
+        String sql = "INSERT INTO myShop.collocazione (corsia, numeroScaffale) VALUES ('" + collocazione.getCorsia().toUpperCase() + "', " + collocazione.getScaffale() + ");";
         IDbOperation writeOp = new WriteOperation(sql);
-        rs = executor.executeOperation(writeOp).getResultSet();
+        DbOperationResult result = executor.executeOperation(writeOp);
 
-        int rowCount = 0;
         try {
-            rowCount = rs.getRow();
-            return rowCount;
+            if (result.getRowsAffected() == 0){
+                throw new SQLException("SQL ERROR!");
+            }
+            else {
+                return result.getRowsAffected();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -111,7 +108,7 @@ public class CollocazioneDAO implements ICollocazioneDAO{
     @Override
     public int removeById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "REMOVE FROM myShop.collocazione WHERE idcollocazione = '" + id + "';";
+        String sql = "DELETE FROM myshop.collocazione WHERE idcollocazione = " + id + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -120,9 +117,7 @@ public class CollocazioneDAO implements ICollocazioneDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -131,7 +126,7 @@ public class CollocazioneDAO implements ICollocazioneDAO{
     @Override
     public int update(Collocazione collocazione) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "UPDATE myShop.collocazione SET corsia = '" + collocazione.getCorsia() + "', numeroScaffale = '" + collocazione.getScaffale() + "' WHERE idcollocazione = '" + collocazione.getId() + ";";
+        String sql = "UPDATE myShop.collocazione SET corsia = '" + collocazione.getCorsia() + "', numeroScaffale = " + collocazione.getScaffale() + " WHERE idcollocazione = " + collocazione.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -140,9 +135,7 @@ public class CollocazioneDAO implements ICollocazioneDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -151,7 +144,7 @@ public class CollocazioneDAO implements ICollocazioneDAO{
     @Override
     public Collocazione findByCorsiaEScaffale(String corsia, int scaffale) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idcollocazione, corsia, numeroScaffale FROM myShop.collocazione WHERE corsia = '" + corsia + "' AND numeroScaffale = '" + scaffale + "';";
+        String sql = "SELECT idcollocazione, corsia, numeroScaffale FROM myShop.collocazione WHERE corsia = '" + corsia + "' AND numeroScaffale = " + scaffale + ";";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 

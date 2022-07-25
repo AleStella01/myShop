@@ -32,4 +32,17 @@ public class CommentoProdotto extends Commento {
     public void setListaAcquisto(ListaAcquisto listaAcquisto) {
         this.listaAcquisto = listaAcquisto;
     }
+
+    @Override
+    public String toString() {
+        return "CommentoProdotto{" +
+                "id=" + id +
+                ", numeroStelle=" + numeroStelle +
+                ", testo='" + testo + '\'' +
+                ", risposto=" + risposto +
+                ", testoRisposta='" + testoRisposta + '\'' +
+                ", cliente=" + cliente +
+                ", listaAcquisto=" + listaAcquisto +
+                '}';
+    }
 }

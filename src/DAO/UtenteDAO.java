@@ -10,12 +10,12 @@ import java.util.ArrayList;
 public class UtenteDAO implements IUtenteDAO{
     private static UtenteDAO instance = new UtenteDAO();
     private IUtente utente;
-    private static IDbConnection connection;
+    //private static IDbConnection connection;
     private static ResultSet rs;
 
     private UtenteDAO(){
         utente = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -26,21 +26,22 @@ public class UtenteDAO implements IUtenteDAO{
     @Override
     public IUtente findById(String username) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT nome, cognome, codiceFiscale, dataNascita, citta, indirizzo, username, password, email, tipo FROM myShop.utente WHERE username = '" + username + "';";
+        String sql = "SELECT idutente, nome, cognome, codiceFiscale, dataNascita, citta, indirizzo, username, password, email, tipo FROM myShop.utente WHERE username = '" + username + "';";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
         try {
             rs.next();
             if (rs.getRow() == 1) {
-                UtenteFactoryProvider.UserType type = (UtenteFactoryProvider.UserType) rs.getObject("tipo");
+                UtenteFactoryProvider.UserType type = selectorType(rs.getString("tipo"));
                 UtenteAbstractFactory factory = UtenteFactoryProvider.getFactory(type);
                 utente = factory.creaUtente();
 
+                utente.setId(rs.getInt("idutente"));
                 utente.setNome(rs.getString("nome"));
                 utente.setCognome(rs.getString("cognome"));
                 utente.setCodiceFiscale(rs.getString("codiceFiscale"));
-                utente.setDataNascita(rs.getDate("dataNascita"));
+                utente.setDataNascita(rs.getString("dataNascita"));
                 utente.setCitta(rs.getString("citta"));
                 utente.setIndirizzo(rs.getString("indirizzo"));
                 utente.setEmail(rs.getString("email"));
@@ -55,28 +56,30 @@ public class UtenteDAO implements IUtenteDAO{
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
         } finally {
-            connection.close();
+            //connection.close();
         }
 
         return null;
     }
     public IUtente findById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT nome, cognome, codiceFiscale, dataNascita, citta, indirizzo, username, password, email, tipo FROM myShop.utente WHERE idutente = '" + id + "';";
+        String sql = "SELECT idutente, nome, cognome, codiceFiscale, dataNascita, citta, indirizzo, username, password, email, tipo FROM myshop.utente WHERE idutente = " + id + ";";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
         try {
             rs.next();
             if (rs.getRow() == 1) {
-                UtenteFactoryProvider.UserType type = (UtenteFactoryProvider.UserType) rs.getObject("tipo");
+//                UtenteFactoryProvider.UserType type = (UtenteFactoryProvider.UserType) rs.getObject("tipo");
+                UtenteFactoryProvider.UserType type = selectorType(rs.getString("tipo"));
                 UtenteAbstractFactory factory = UtenteFactoryProvider.getFactory(type);
                 utente = factory.creaUtente();
 
+                utente.setId(rs.getInt("idutente"));
                 utente.setNome(rs.getString("nome"));
                 utente.setCognome(rs.getString("cognome"));
                 utente.setCodiceFiscale(rs.getString("codiceFiscale"));
-                utente.setDataNascita(rs.getDate("dataNascita"));
+                utente.setDataNascita(rs.getString("dataNascita"));
                 utente.setCitta(rs.getString("citta"));
                 utente.setIndirizzo(rs.getString("indirizzo"));
                 utente.setEmail(rs.getString("email"));
@@ -91,7 +94,7 @@ public class UtenteDAO implements IUtenteDAO{
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
         } finally {
-            connection.close();
+            //connection.close();
         }
 
         return null;
@@ -100,20 +103,27 @@ public class UtenteDAO implements IUtenteDAO{
     @Override
     public ArrayList<IUtente> findAll() {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT nome, cognome, username, email, tipo FROM myShop.utente;";
+        String sql = "SELECT idutente, nome, cognome, codiceFiscale, dataNascita, citta, indirizzo, username, email, tipo FROM myShop.utente;";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
         ArrayList<IUtente> utenti = new ArrayList<>();
         try{
             while (rs.next()){
-                UtenteFactoryProvider.UserType type = (UtenteFactoryProvider.UserType) rs.getObject("tipo");
+                UtenteFactoryProvider.UserType type = selectorType(rs.getString("tipo"));
                 UtenteAbstractFactory factory = UtenteFactoryProvider.getFactory(type);
                 utente = factory.creaUtente();
+
+                utente.setId(rs.getInt("idutente"));
                 utente.setNome(rs.getString("nome"));
                 utente.setCognome(rs.getString("cognome"));
+                utente.setCodiceFiscale(rs.getString("codiceFiscale"));
                 utente.setUsername(rs.getString("username"));
                 utente.setEmail(rs.getString("email"));
+                utente.setDataNascita(rs.getString("dataNascita"));
+                utente.setCitta(rs.getString("citta"));
+                utente.setIndirizzo(rs.getString("indirizzo"));
+
                 utenti.add(utente);
             }
             return utenti;
@@ -124,7 +134,7 @@ public class UtenteDAO implements IUtenteDAO{
         } catch (NullPointerException e){
             System.out.println("Resultset: " + e.getMessage());
         } finally {
-            connection.close();
+            //connection.close();
         }
 
         return null;
@@ -133,13 +143,14 @@ public class UtenteDAO implements IUtenteDAO{
     @Override
     public int add(IUtente utente) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.utente (nome, cognome, codiceFiscale, dataNascita, citta, indirizzo, username, password, email, tipo) VALUES ('" + utente.getNome() + "','" + utente.getCognome() + "','" + utente.getCodiceFiscale() + "','" + utente.getDataNascita() + "','" + utente.getCitta() + "','" + utente.getIndirizzo() + "','" + utente.getUsername() + "','" + utente.getPassword() + "','" + utente.getEmail() + "','" + utente.getClass().toString().toUpperCase() + "');";
+        String sql = "INSERT INTO `myshop`.`utente` (`nome`, `cognome`, `codiceFiscale`, `dataNascita`, `citta`, `indirizzo`, `username`, `password`, `email`, `tipo`) VALUES ('" + utente.getNome() + "','" + utente.getCognome() + "','" + utente.getCodiceFiscale() + "', '" + utente.getDataNascita() + "', '" + utente.getCitta() + "','" + utente.getIndirizzo() + "','" + utente.getUsername() + "','" + utente.getPassword() + "','" + utente.getEmail() + "','" + utente.getType() + "');";
         IDbOperation writeOp = new WriteOperation(sql);
-        rs = executor.executeOperation(writeOp).getResultSet();
-        int rowCount = 0;
+        DbOperationResult result = executor.executeOperation(writeOp);
         try {
-            rowCount = rs.getRow();
-            return rowCount;
+            if (result.getRowsAffected() == 0)
+                throw new SQLException("SQL Error!");
+            else
+                return result.getRowsAffected();
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
             System.out.println("SQLState: " + e.getSQLState());
@@ -147,7 +158,7 @@ public class UtenteDAO implements IUtenteDAO{
         } catch (NullPointerException e){
             System.out.println("Resultset: " + e.getMessage());
         } finally {
-            connection.close();
+            //connection.close();
         }
 
         return 0;
@@ -169,7 +180,7 @@ public class UtenteDAO implements IUtenteDAO{
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
         } finally {
-            connection.close();
+            //connection.close();
         }
 
         return 0;
@@ -178,7 +189,7 @@ public class UtenteDAO implements IUtenteDAO{
     @Override
     public int update(IUtente utente) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "UPDATE myShop.utente SET nome = '" + utente.getNome() + "', cognome = '" + utente.getCognome() + "', email = '" + utente.getEmail() + "', codiceFiscale = '" + utente.getCodiceFiscale() + "', dataNascita = '" + utente.getDataNascita() + "', citta = '" + utente.getCitta() + "', indirizzo = '" + utente.getIndirizzo() + " WHERE username = '" + utente.getUsername() + "';";
+        String sql = "UPDATE myShop.utente SET nome = '" + utente.getNome() + "', cognome = '" + utente.getCognome() + "', email = '" + utente.getEmail() + "', codiceFiscale = '" + utente.getCodiceFiscale() + "', dataNascita = '" + utente.getDataNascita() + "', citta = '" + utente.getCitta() + "', indirizzo = '" + utente.getIndirizzo() + "' WHERE username = '" + utente.getUsername() + "';";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -191,7 +202,7 @@ public class UtenteDAO implements IUtenteDAO{
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
         } finally {
-            connection.close();
+            //connection.close();
         }
 
         return 0;
@@ -212,9 +223,21 @@ public class UtenteDAO implements IUtenteDAO{
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
         } finally {
-            connection.close();
+            //connection.close();
         }
 
         return 0;
+    }
+
+    public UtenteFactoryProvider.UserType selectorType(String type) {
+        switch (type.toUpperCase()){
+            case "MANAGER":
+                return UtenteFactoryProvider.UserType.MANAGER;
+            case "ADMIN":
+                return UtenteFactoryProvider.UserType.ADMIN;
+            default:
+                return UtenteFactoryProvider.UserType.CLIENTE;
+
+        }
     }
 }

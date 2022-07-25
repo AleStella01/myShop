@@ -13,7 +13,7 @@ public class ProdottoDAO implements IArticoloDAO{
     private static IDbConnection connection;
     private static ResultSet rs;
 
-    public ProdottoDAO() {
+    private ProdottoDAO() {
         prodotto = null;
         connection = null;
         rs = null;

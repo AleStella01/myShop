@@ -54,4 +54,15 @@ public class Articolo implements IArticolo{
     public ICategoria getCategoria() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "Articolo{" +
+                "prezzo=" + prezzo +
+                ", commenti=" + commenti +
+                ", nome='" + nome + '\'' +
+                ", id=" + id +
+                ", descrizione='" + descrizione + '\'' +
+                '}';
+    }
 }

@@ -12,12 +12,12 @@ import java.util.ArrayList;
 public class ProduttoreDAO implements IProduttoreDAO{
     private static ProduttoreDAO instance = new ProduttoreDAO();
     private IProduttore produttore;
-    private static IDbConnection connection;
+    //private static IDbConnection connection;
     private static ResultSet rs;
 
     private ProduttoreDAO(){
         produttore = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -28,7 +28,7 @@ public class ProduttoreDAO implements IProduttoreDAO{
     @Override
     public IProduttore findByName(String name) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idproduttore, nome, sitoWeb, nazione, citta FROM myShop.produttore WHERE nome = '" + name + "';";
+        String sql = "SELECT idproduttore, nome, sitoWeb, nazione, citta FROM myShop.produttore WHERE nome = '" + name.toLowerCase() + "';";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -51,8 +51,6 @@ public class ProduttoreDAO implements IProduttoreDAO{
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
         return null;
     }
@@ -94,18 +92,16 @@ public class ProduttoreDAO implements IProduttoreDAO{
         DbOperationExecutor executor = new DbOperationExecutor();
         String sql = "INSERT INTO myShop.produttore (nome, sitoWeb, nazione, citta) VALUES ('" + produttore.getNomeProduttore() + "','" + produttore.getSitoWeb() + "','" + produttore.getNazione() + "','" + produttore.getCitta() + "');";
         IDbOperation writeOp = new WriteOperation(sql);
-        rs = executor.executeOperation(writeOp).getResultSet();
-
-        int rowCount = 0;
+        DbOperationResult result = executor.executeOperation(writeOp);
         try {
-            rowCount = rs.getRow();
-            return rowCount;
+            if (result.getRowsAffected() == 0) {
+                throw new SQLException("SQL Error");
+            }
+            return result.getRowsAffected();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
 
         return 0;
@@ -123,9 +119,7 @@ public class ProduttoreDAO implements IProduttoreDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -143,9 +137,7 @@ public class ProduttoreDAO implements IProduttoreDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -175,9 +167,7 @@ public class ProduttoreDAO implements IProduttoreDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }

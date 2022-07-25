@@ -1,8 +1,11 @@
-package Test;
+package Test.Model;
 
 import Model.*;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.Time;
+import java.util.Date;
 
 public class UtenteFactoryTest {
     @Test
@@ -11,6 +14,7 @@ public class UtenteFactoryTest {
         UtenteAbstractFactory factory = UtenteFactoryProvider.getFactory(type);
         Assert.assertTrue(factory instanceof AdminFactory);
         IUtente utente = factory.creaUtente();
+        System.out.println(UtenteFactoryProvider.UserType.ADMIN);
         Assert.assertTrue(utente instanceof Admin);
     }
 

@@ -6,7 +6,7 @@ public class Utente implements IUtente{
     protected String nome;
     protected String cognome;
     protected String codiceFiscale;
-    protected Date dataNascita;
+    protected String dataNascita;
     protected String citta;
     protected String indirizzo;
     protected String username;
@@ -17,7 +17,7 @@ public class Utente implements IUtente{
     public Utente() {
     }
 
-    public Utente(String nome, String cognome, String codiceFiscale, Date dataNascita, String citta, String indirizzo, String username, String email) {
+    public Utente(String nome, String cognome, String codiceFiscale, String dataNascita, String citta, String indirizzo, String username, String email) {
         this.nome = nome;
         this.cognome = cognome;
         this.codiceFiscale = codiceFiscale;
@@ -59,12 +59,12 @@ public class Utente implements IUtente{
     }
 
     @Override
-    public Date getDataNascita() {
+    public String getDataNascita() {
         return dataNascita;
     }
 
     @Override
-    public void setDataNascita(Date dataNascita) {
+    public void setDataNascita(String dataNascita) {
         this.dataNascita = dataNascita;
     }
 
@@ -121,6 +121,11 @@ public class Utente implements IUtente{
     @Override
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String getType() {
+        return this.getClass().toString().toUpperCase();
     }
 
     @Override

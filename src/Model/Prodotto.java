@@ -30,4 +30,18 @@ public class Prodotto extends Articolo implements IProdotto{
     public ICategoria getCategoria() {
         return categoria;
     }
+
+    @Override
+    public String toString() {
+        return "Prodotto{" +
+                "prezzo=" + prezzo +
+                ", nome='" + nome + '\'' +
+                ", id=" + id +
+                ", descrizione='" + descrizione + '\'' +
+                ", collocazione=" + collocazione +
+                ", produttore=" + produttore +
+                ", quantita=" + quantita +
+                ", categoria=" + categoria +
+                '}';
+    }
 }

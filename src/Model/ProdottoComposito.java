@@ -53,4 +53,18 @@ public class ProdottoComposito extends Articolo implements IProdotto{
     public List<IProdotto> getSottoprodotti(){
         return sottoprodotti;
     }
+
+    @Override
+    public String toString() {
+        return "ProdottoComposito{" +
+                "prezzo=" + prezzo +
+                ", nome='" + nome + '\'' +
+                ", id=" + id +
+                ", descrizione='" + descrizione + '\'' +
+                ", sottoprodotti=" + sottoprodotti +
+                ", collocazione=" + collocazione +
+                ", categoria=" + categoria +
+                ", produttore=" + produttore +
+                '}';
+    }
 }

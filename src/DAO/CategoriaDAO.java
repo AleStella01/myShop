@@ -13,12 +13,12 @@ import java.util.ArrayList;
 public class CategoriaDAO implements ICategoriaDAO{
     private static CategoriaDAO instance = new CategoriaDAO();
     private ICategoria categoria;
-    private static IDbConnection  connection;
+    //private static IDbConnection  connection;
     private static ResultSet rs;
 
     private CategoriaDAO(){
         categoria = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -30,21 +30,21 @@ public class CategoriaDAO implements ICategoriaDAO{
     @Override
     public ICategoria findByName(String nome) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idcategoria, nome, tipo FROM myShop.categoria WHERE nome = '" + nome + "';";
+        String sql = "SELECT idcategoria, nome, tipo FROM myShop.categoria WHERE nome = '" + nome.toLowerCase() + "';";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
         try {
             rs.next();
             if (rs.getRow() == 1) {
-                CategoriaFactoryProvider.CategoriaFactoryType type = (CategoriaFactoryProvider.CategoriaFactoryType) rs.getObject("tipo");
+                CategoriaFactoryProvider.CategoriaFactoryType type = selectorType(rs.getString("tipo"));
                 CategoriaAbstractFactory factory = CategoriaFactoryProvider.getFactory(type);
                 categoria = factory.crea();
 
                 categoria.setId(rs.getInt("idcategoria"));
                 categoria.setNome(rs.getString("nome"));
 
-                sql = "SELECT categoria_idcategoria1 FROM categoria_has_categoria WHERE categoria_idcategoria = '" + categoria.getId() + "';";
+                sql = "SELECT categoria_idcategoria1 FROM categoria_has_categoria WHERE categoria_idcategoria = " + categoria.getId() + ";";
                 readOp = new ReadOperation(sql);
                 rs = executor.executeOperation(readOp).getResultSet();
                 while (rs.next()){
@@ -55,9 +55,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }
@@ -91,9 +89,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }
@@ -112,9 +108,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -137,9 +131,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return 0;
     }
@@ -157,9 +149,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return 0;
     }
@@ -167,21 +157,21 @@ public class CategoriaDAO implements ICategoriaDAO{
     @Override
     public ICategoria findById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idcategoria, nome, tipo FROM myShop.categoria WHERE idcategoria = '" + id + "';";
+        String sql = "SELECT idcategoria, nome, tipo FROM myShop.categoria WHERE idcategoria = " + id + ";";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
         try {
             rs.next();
             if (rs.getRow() == 1) {
-                CategoriaFactoryProvider.CategoriaFactoryType type = (CategoriaFactoryProvider.CategoriaFactoryType) rs.getObject("tipo");
+                CategoriaFactoryProvider.CategoriaFactoryType type = selectorType(rs.getString("tipo"));
                 CategoriaAbstractFactory factory = CategoriaFactoryProvider.getFactory(type);
                 categoria = factory.crea();
 
                 categoria.setId(rs.getInt("idcategoria"));
                 categoria.setNome(rs.getString("nome"));
 
-                sql = "SELECT categoria_idcategoria1 FROM categoria_has_categoria WHERE categoria_idcategoria = '" + categoria.getId() + "';";
+                sql = "SELECT categoria_idcategoria1 FROM categoria_has_categoria WHERE categoria_idcategoria = " + categoria.getId() + ";";
                 readOp = new ReadOperation(sql);
                 rs = executor.executeOperation(readOp).getResultSet();
                 while (rs.next()){
@@ -192,9 +182,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }
@@ -213,9 +201,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -235,9 +221,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -257,9 +241,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -279,11 +261,19 @@ public class CategoriaDAO implements ICategoriaDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return 0;
     }
 
+    public CategoriaFactoryProvider.CategoriaFactoryType selectorType(String type){
+        switch (type.toUpperCase()){
+            case "PRODOTTO":
+                return CategoriaFactoryProvider.CategoriaFactoryType.PRODOTTO;
+            case "SERVIZIO":
+                return CategoriaFactoryProvider.CategoriaFactoryType.SERVIZIO;
+            default:
+                return null;
+        }
+    }
 }

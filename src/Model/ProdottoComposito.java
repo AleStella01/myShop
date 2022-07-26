@@ -38,6 +38,11 @@ public class ProdottoComposito extends Articolo implements IProdotto{
     }
 
     @Override
+    public void setCollocazione(Collocazione c) {
+
+    }
+
+    @Override
     public ICategoria getCategoria() {
         return categoria;
     }

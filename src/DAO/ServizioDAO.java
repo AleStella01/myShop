@@ -12,12 +12,12 @@ import java.util.ArrayList;
 public class ServizioDAO implements IArticoloDAO{
     private static ServizioDAO instance = new ServizioDAO();
     private IArticolo servizio;
-    private static DbConnection connection;
+    //private static DbConnection connection;
     private static ResultSet rs;
 
     public ServizioDAO() {
         servizio = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -28,7 +28,7 @@ public class ServizioDAO implements IArticoloDAO{
     @Override
     public IArticolo findByName(String nome) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idservizio, nome, costo, descrizione FROM myShop.servizio WHERE nome = '" + nome + "';";
+        String sql = "SELECT idservizio, nome, costo, descrizione, categoria_idcategoria FROM myShop.servizio WHERE nome = '" + nome + "';";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -42,7 +42,8 @@ public class ServizioDAO implements IArticoloDAO{
                 servizio.setNome(rs.getString("nome"));
                 servizio.setPrezzo(rs.getFloat("costo"));
                 servizio.setDescrizione(rs.getString("descrizione"));
-                servizio.setId(rs.getInt("idprodotto"));
+                servizio.setId(rs.getInt("idservizio"));
+                servizio.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
 
                 return servizio;
             }
@@ -52,17 +53,14 @@ public class ServizioDAO implements IArticoloDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
-        } finally {
-            connection.close();
         }
-
         return null;
     }
 
     @Override
     public ArrayList<IArticolo> findAll() {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idservizio, nome, costo, descrizione FROM myShop.prodotto";
+        String sql = "SELECT idservizio, nome, costo, descrizione, categoria_idcategoria FROM myShop.servizio";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -76,7 +74,8 @@ public class ServizioDAO implements IArticoloDAO{
                 servizio.setNome(rs.getString("nome"));
                 servizio.setPrezzo(rs.getFloat("costo"));
                 servizio.setDescrizione(rs.getString("descrizione"));
-                servizio.setId(rs.getInt("idprodotto"));
+                servizio.setId(rs.getInt("idservizio"));
+                servizio.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
 
                 servizi.add(servizio);
             }
@@ -87,8 +86,6 @@ public class ServizioDAO implements IArticoloDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
 
         return null;
@@ -97,7 +94,7 @@ public class ServizioDAO implements IArticoloDAO{
     @Override
     public int add(IArticolo articolo) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.servizio (nome, costo, descrizione, categoria_idcategoria) VALUES ('" + articolo.getNome() + "', '" + articolo.getPrezzo() + "', '" + articolo.getDescrizione() + "', '" + articolo.getCategoria().getId() + "');";
+        String sql = "INSERT INTO myShop.servizio (nome, costo, descrizione, categoria_idcategoria) VALUES ('" + articolo.getNome().toLowerCase() + "', " + articolo.getPrezzo() + ", '" + articolo.getDescrizione() + "', " + articolo.getCategoria().getId() + ");";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         int rowCount = 0;
@@ -107,9 +104,7 @@ public class ServizioDAO implements IArticoloDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return 0;
     }
@@ -117,7 +112,7 @@ public class ServizioDAO implements IArticoloDAO{
     @Override
     public int removeById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "DELETE FROM myShop.servizio WHERE idservizio = '" + id + "';";
+        String sql = "DELETE FROM myShop.servizio WHERE idservizio = " + id + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         int rowCount = 0;
@@ -127,9 +122,7 @@ public class ServizioDAO implements IArticoloDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return 0;
     }
@@ -137,7 +130,7 @@ public class ServizioDAO implements IArticoloDAO{
     @Override
     public int update(IArticolo articolo) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "UPDATE myShop.servizio SET nome = '" + articolo.getNome() + "', costo = '" + articolo.getPrezzo() + "', descrizione = '" + articolo.getDescrizione() + "', categoria_idcategoria = '" + articolo.getCategoria().getId() + "' WHERE idservizio = '" + articolo.getId() + "';";
+        String sql = "UPDATE myShop.servizio SET nome = '" + articolo.getNome() + "', costo = " + articolo.getPrezzo() + ", descrizione = '" + articolo.getDescrizione() + "', categoria_idcategoria = " + articolo.getCategoria().getId() + " WHERE idservizio = " + articolo.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
 
@@ -148,9 +141,7 @@ public class ServizioDAO implements IArticoloDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return 0;
     }
@@ -169,10 +160,11 @@ public class ServizioDAO implements IArticoloDAO{
                 ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
                 servizio = factory.crea();
 
-                servizio.setId(id);
                 servizio.setNome(rs.getString("nome"));
-                servizio.setPrezzo(rs.getFloat("prezzo"));
+                servizio.setPrezzo(rs.getFloat("costo"));
                 servizio.setDescrizione(rs.getString("descrizione"));
+                servizio.setId(rs.getInt("idservizio"));
+                servizio.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
 
                 return servizio;
             }
@@ -182,8 +174,6 @@ public class ServizioDAO implements IArticoloDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return null;
     }

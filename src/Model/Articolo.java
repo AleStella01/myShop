@@ -56,6 +56,11 @@ public class Articolo implements IArticolo{
     }
 
     @Override
+    public void setCategoria(ICategoria categoria) {
+
+    }
+
+    @Override
     public String toString() {
         return "Articolo{" +
                 "prezzo=" + prezzo +

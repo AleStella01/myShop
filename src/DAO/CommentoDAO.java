@@ -13,12 +13,12 @@ import java.util.ArrayList;
 public class CommentoDAO implements ICommentoDAO{
     private static CommentoDAO instance = new CommentoDAO();
     private Commento commento;
-    private static IDbConnection connection;
+    //private static IDbConnection connection;
     private static ResultSet rs;
 
     public CommentoDAO() {
         commento = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -46,7 +46,7 @@ public class CommentoDAO implements ICommentoDAO{
                 commento.setRisposto(rs.getBoolean("risposto"));
                 commento.setTestoRisposta(rs.getString("testoRisposta"));
                 commento.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
-                commento.setListaAcquisto(ListaAcquistoDAO.getInstance().findById(rs.getInt("listaAcquisto_idlistaAcqusito")));
+                commento.setListaAcquisto(ListaAcquistoDAO.getInstance().findById(rs.getInt("listaAcquisto_idlistaAcquisto")));
 
                 commenti.add(commento);
             }
@@ -54,9 +54,7 @@ public class CommentoDAO implements ICommentoDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }
@@ -81,7 +79,7 @@ public class CommentoDAO implements ICommentoDAO{
                 commento.setRisposto(rs.getBoolean("risposto"));
                 commento.setTestoRisposta(rs.getString("testoRisposta"));
                 commento.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
-                commento.setListaAcquisto(ListaAcquistoDAO.getInstance().findById(rs.getInt("listaAcquisto_idlistaAcqusito")));
+                commento.setListaAcquisto(ListaAcquistoDAO.getInstance().findById(rs.getInt("listaAcquisto_idlistaAcquisto")));
 
                 commenti.add(commento);
             }
@@ -89,9 +87,7 @@ public class CommentoDAO implements ICommentoDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }
@@ -99,7 +95,7 @@ public class CommentoDAO implements ICommentoDAO{
     @Override
     public int add(Commento commento) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.commento (NumeroStelle, testo, risposto, testoRisposta, utente_idutente, listaAcquisto_idlistaAcquisto) VALUES ('" + commento.getNumeroStelle() + "', '" + commento.getTesto() + "', '" + commento.isRisposto() + "', '" + commento.getTestoRisposta() + "', '" + commento.getCliente().getId() + "', '" + commento.getListaAcquisto().getId() + "');";
+        String sql = "INSERT INTO myShop.commento (NumeroStelle, testo, risposto, testoRisposta, utente_idutente, listaAcquisto_idlistaAcquisto) VALUES (" + commento.getNumeroStelle() + ", '" + commento.getTesto() + "', " + commento.isRisposto() + ", '" + commento.getTestoRisposta() + "', " + commento.getCliente().getId() + ", " + commento.getListaAcquisto().getId() + ");";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         int rowCount = 0;
@@ -112,8 +108,6 @@ public class CommentoDAO implements ICommentoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e){
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -121,7 +115,7 @@ public class CommentoDAO implements ICommentoDAO{
     @Override
     public int removeById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "DELETE FROM myShop.commento WHERE idcommento = " + id + "';";
+        String sql = "DELETE FROM myShop.commento WHERE idcommento = " + id + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         int rowCount = 0;
@@ -134,8 +128,6 @@ public class CommentoDAO implements ICommentoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e){
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -143,7 +135,7 @@ public class CommentoDAO implements ICommentoDAO{
     @Override
     public int update(Commento commento) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "UPDATE myShop.commento SET NumeroStelle = " + commento.getNumeroStelle() + "', testo = '" + commento.getTesto() + "', risposto = " + commento.isRisposto() + "', testoRisposta = '" + commento.getTestoRisposta() + "', utente_idutente = " + commento.getCliente().getId() + "', listaAcquisto_idlistaAcquisto = " + commento.getListaAcquisto().getId() + " WHERE idcommento = " + commento.getId() + ";";
+        String sql = "UPDATE myShop.commento SET NumeroStelle = " + commento.getNumeroStelle() + ", testo = '" + commento.getTesto() + "', risposto = " + commento.isRisposto() + ", testoRisposta = '" + commento.getTestoRisposta() + "', utente_idutente = " + commento.getCliente().getId() + ", listaAcquisto_idlistaAcquisto = " + commento.getListaAcquisto().getId() + " WHERE idcommento = " + commento.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         int rowCount = 0;
@@ -156,8 +148,6 @@ public class CommentoDAO implements ICommentoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e){
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }

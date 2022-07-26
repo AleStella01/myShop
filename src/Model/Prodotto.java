@@ -1,10 +1,10 @@
 package Model;
 
 public class Prodotto extends Articolo implements IProdotto{
-    private CollocazioneProdotto collocazione;
-    private ProduttoreMobili produttore;
+    private Collocazione collocazione;
+    private IProduttore produttore;
     private int quantita;
-    private CategoriaProdotto categoria;
+    private ICategoria categoria;
 
     @Override
     public Float getPrezzo() {
@@ -17,12 +17,12 @@ public class Prodotto extends Articolo implements IProdotto{
     }
 
     @Override
-    public ProduttoreMobili getProduttore() {
+    public IProduttore getProduttore() {
         return produttore;
     }
 
     @Override
-    public CollocazioneProdotto getCollocazione() {
+    public Collocazione getCollocazione() {
         return collocazione;
     }
 
@@ -43,5 +43,17 @@ public class Prodotto extends Articolo implements IProdotto{
                 ", quantita=" + quantita +
                 ", categoria=" + categoria +
                 '}';
+    }
+
+    public void setCollocazione(Collocazione collocazione) {
+        this.collocazione = collocazione;
+    }
+
+    public void setProduttore(IProduttore produttore) {
+        this.produttore = produttore;
+    }
+
+    public void setCategoria(ICategoria categoria) {
+        this.categoria = categoria;
     }
 }

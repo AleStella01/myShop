@@ -5,20 +5,17 @@ import Model.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 
 public class ListaAcquistoDAO implements IListaAcquistoDAO{
-    private static ListaAcquistoDAO instance;
+    private static ListaAcquistoDAO instance = new ListaAcquistoDAO();
     private ListaAcquisto listaAcquisto;
-    private static IDbConnection connection;
+    //private static IDbConnection connection;
     private static ResultSet rs;
 
     private ListaAcquistoDAO() {
         listaAcquisto = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -44,38 +41,13 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
                 listaAcquisto.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
                 listaAcquisto.setPuntoVendita(PuntoVenditaDAO.getInstance().findById(rs.getInt("puntoVendita_idpuntoVendita")));
 
-                sql = "SELECT prodotto_idprodotto, quantitaProdotto, FROM listaAcquisto_has_prodotto WHERE main_composito = 0 AND listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    listaAcquisto.addProdotto((IProdotto) ProdottoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantitaProdotto"));
-                }
-
-                sql = "SELECT prodotto_idprodotto, quantitaProdotto, indirizzoSpedizione FROM listaAcquisto_has_prodotto WHERE main_composito = 1 AND listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    listaAcquisto.addProdotto((IProdotto) ProdottoCompositoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantitaProdotto"));
-                }
-                listaAcquisto.addSpedizione(rs.getString("indirizzoSpedizione"));
-
-                sql = "SELECT servizio_idservizio FROM listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    if (rs.getInt("servizio_idservizio") != 0){
-                        listaAcquisto.addServizio(ServizioDAO.getInstance().findById(rs.getInt("servizio_idservizio")));
-                    }
-                }
                 liste.add(listaAcquisto);
             }
             return (liste);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }
@@ -98,29 +70,6 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
                 listaAcquisto.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
                 listaAcquisto.setPuntoVendita(PuntoVenditaDAO.getInstance().findById(rs.getInt("puntoVendita_idpuntoVendita")));
 
-                sql = "SELECT prodotto_idprodotto, quantitaProdotto, FROM listaAcquisto_has_prodotto WHERE main_composito = 0 AND listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    listaAcquisto.addProdotto((IProdotto) ProdottoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantitaProdotto"));
-                }
-
-                sql = "SELECT prodotto_idprodotto, quantitaProdotto, indirizzoSpedizione FROM listaAcquisto_has_prodotto WHERE main_composito = 1 AND listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    listaAcquisto.addProdotto((IProdotto) ProdottoCompositoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantitaProdotto"));
-                }
-                listaAcquisto.addSpedizione(rs.getString("indirizzoSpedizione"));
-
-                sql = "SELECT servizio_idservizio FROM listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    if (rs.getInt("servizio_idservizio") != 0){
-                        listaAcquisto.addServizio(ServizioDAO.getInstance().findById(rs.getInt("servizio_idservizio")));
-                    }
-                }
                 liste.add(listaAcquisto);
             }
             return liste;
@@ -128,8 +77,6 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
         return null;
     }
@@ -137,7 +84,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public ListaAcquisto findById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita FROM myShop.listaAcquisto;";
+        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita FROM myShop.listaAcquisto WHERE idlistaAcquisto = " + id +  ";";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -152,37 +99,12 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
                 listaAcquisto.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
                 listaAcquisto.setPuntoVendita(PuntoVenditaDAO.getInstance().findById(rs.getInt("puntoVendita_idpuntoVendita")));
 
-                sql = "SELECT prodotto_idprodotto, quantitaProdotto, FROM listaAcquisto_has_prodotto WHERE main_composito = 0 AND listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    listaAcquisto.addProdotto((IProdotto) ProdottoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantitaProdotto"));
-                }
-
-                sql = "SELECT prodotto_idprodotto, quantitaProdotto, indirizzoSpedizione FROM listaAcquisto_has_prodotto WHERE main_composito = 1 AND listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    listaAcquisto.addProdotto((IProdotto) ProdottoCompositoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantitaProdotto"));
-                }
-                listaAcquisto.addSpedizione(rs.getString("indirizzoSpedizione"));
-
-                sql = "SELECT servizio_idservizio FROM listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = '" + listaAcquisto.getId() + "';";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                while (rs.next()){
-                    if (rs.getInt("servizio_idservizio") != 0){
-                        listaAcquisto.addServizio(ServizioDAO.getInstance().findById(rs.getInt("servizio_idservizio")));
-                    }
-                }
                 return listaAcquisto;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return null;
     }
@@ -197,31 +119,12 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
         ArrayList<ListaAcquisto> liste = findAll();
         this.listaAcquisto = liste.get(liste.size() - 1);
         try {
-            Iterator<Map.Entry<IProdotto, Integer>> prodottiIterator = listaAcquisto.getProdotti().entrySet().iterator();
-            while (prodottiIterator.hasNext()){
-                Map.Entry<IProdotto, Integer> prodottoEntry = prodottiIterator.next();
-                sql = "INSERT INTO myShop.listaAcquisto_has_prodotto (listaAcquisto_idlistaAcquisto, prodotto_idprodotto, quantitaProdotto, indirizzoSpedizione) VALUES ('" + this.listaAcquisto.getId() + "', '" + prodottoEntry.getKey().getId() + "', '" + prodottoEntry.getValue() + "', '" + listaAcquisto.getIndirizzoSpedizione() + "');";
-                writeOp = new WriteOperation(sql);
-
-                rs = executor.executeOperation(writeOp).getResultSet();
-            }
-
-            ListIterator<IArticolo> servizioIterator = listaAcquisto.getServizi().listIterator();
-            while (servizioIterator.hasNext()){
-                IArticolo servizio = servizioIterator.next();
-                sql = "INSERT INTO myShop.listaAcquisto_has_prodotto (listaAcquisto_idlistaAcquisto, servizio_idservizio) VALUES ('" + this.listaAcquisto.getId() + "', '" + servizio.getId() + "',);";
-                writeOp = new WriteOperation(sql);
-                rs = executor.executeOperation(writeOp).getResultSet();
-
-                int rowCount = rs.getRow();
-                return rowCount;
-            }
+            int rowCount = rs.getRow();
+            return rowCount;
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
         return 0;
     }
@@ -229,12 +132,8 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public int removeById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "DELETE FORM myShop.listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = " + id + ";";
+        String sql = "DELETE FROM myShop.listaAcquisto WHERE idlistaAcquisto = " + id + ";";
         IDbOperation writeOp = new WriteOperation(sql);
-        rs = executor.executeOperation(writeOp).getResultSet();
-
-        sql = "DELETE FROM myShop.listaAcquisto WHERE idlistaAcquisto = " + id + ";";
-        writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try{
             int rowCount = rs.getRow();
@@ -245,8 +144,6 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -266,8 +163,6 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -275,7 +170,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public int addProdotto(ListaAcquisto listaAcquisto, IArticolo prodotto, int quantita) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.listaAcquisto_has_prodotto (listaAcquisto_idlistaAcquisto, prodotto_idprodotto, quantitaProdotto) VALUES ('" + listaAcquisto.getId() + "', '" + prodotto.getId() + "', '" + quantita + "');";
+        String sql = "INSERT INTO myShop.listaAcquisto_has_prodotto (listaAcquisto_idlistaAcquisto, prodotto_idprodotto, quantitaProdotto) VALUES (" + listaAcquisto.getId() + ", " + prodotto.getId() + ", " + quantita + ");";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -287,8 +182,6 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -296,7 +189,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public int addServizio(ListaAcquisto listaAcquisto, IArticolo servizio, String spedizione) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.listaAcquisto_has_prodotto (listaAcquisto_idlistaAcquisto, servizio_idservizio, indirizzoSpedizione) VALUES ('" + listaAcquisto.getId() + "', '" + servizio.getId() + "', '" + spedizione + "');";
+        String sql = "INSERT INTO myShop.listaAcquisto_has_servizio (listaascquisto_idlistaacquisto, servizio_idservizio, note) VALUES (" + listaAcquisto.getId() + ", " + servizio.getId() + ", '" + spedizione + "');";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -308,8 +201,6 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -317,7 +208,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public int removeProdotto(ListaAcquisto listaAcquisto, IArticolo prodotto) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "DELETE FROM myShop.listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = " + listaAcquisto.getId() + "prodotto_idprodotto = " + prodotto.getId() + ";";
+        String sql = "DELETE FROM myShop.listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = " + listaAcquisto.getId() + " AND prodotto_idprodotto = " + prodotto.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -329,8 +220,6 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
@@ -338,7 +227,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public int removeServizio(ListaAcquisto listaAcquisto, IArticolo servizio) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "DELETE FROM myShop.listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = " + listaAcquisto.getId() + "servizio_idservizio = " + servizio.getId() + ";";
+        String sql = "DELETE FROM myShop.listaAcquisto_has_servizio WHERE listaascquisto_idlistaacquisto = " + listaAcquisto.getId() + " AND servizio_idservizio = " + servizio.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -350,9 +239,51 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
         return 0;
     }
+
+    public Map<IProdotto, Integer> getProdotti(ListaAcquisto listaAcquisto){
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "SELECT prodotto_idprodotto, quantitaProdotto FROM myShop.listaAcquisto_has_prodotto WHERE listaAcquisto_idlistaAcquisto = " + listaAcquisto.getId() + ";";
+        IDbOperation readOp = new ReadOperation(sql);
+        rs = executor.executeOperation(readOp).getResultSet();
+
+        Map<IProdotto, Integer> prodotti = new HashMap<>();
+        try {
+            while (rs.next()){
+                prodotti.put((IProdotto) ProdottoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantitaProdotto"));
+            }
+            return prodotti;
+        } catch (SQLException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
+            e.getMessage();
+        }
+        return null;
+    }
+
+    public List<IArticolo> getServizi(ListaAcquisto listaAcquisto){
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "SELECT servizio_idservizio, note FROM myShop.listaAcquisto_has_servizio WHERE listaascquisto_idlistaacquisto = " + listaAcquisto.getId() + ";";
+        IDbOperation readOp = new ReadOperation(sql);
+        rs = executor.executeOperation(readOp).getResultSet();
+
+        List<IArticolo> servizi = new ArrayList<>();
+        try{
+            while (rs.next()){
+                servizi.add(ServizioDAO.getInstance().findById(rs.getInt("servizio_idservizio")));
+                if (rs.getString("note") != null) {
+                    listaAcquisto.setIndirizzoSpedizione(rs.getString("note"));
+                }
+            }
+            return servizi;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
+        return null;
+    }
+
 }

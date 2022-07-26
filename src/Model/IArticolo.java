@@ -10,4 +10,5 @@ public interface IArticolo {
     String getDescrizione();
     void setDescrizione(String descrizione);
     ICategoria getCategoria();
+    void setCategoria(ICategoria categoria);
 }

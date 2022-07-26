@@ -15,6 +15,8 @@ public abstract class ListaAcquisto {
     public abstract void addSpedizione(String indirizzo);
     public abstract String getIndirizzoSpedizione();
     public abstract List<IArticolo> getServizi();
+    public abstract void setIndirizzoSpedizione(String indirizzoSpedizione);
+
 
     public IUtente getCliente() {
         return cliente;

@@ -15,4 +15,5 @@ public interface ICategoriaDAO {
     int addSuperCategoria(ICategoria categoria, ICategoria superCategoria);
     int removeSubCategoria(ICategoria categoria, ICategoria subcategoria);
     int removeSuperCategoria(ICategoria categoria, ICategoria superCategoria);
+    ArrayList<ICategoria> getSubCategorie(ICategoria categoria);
 }

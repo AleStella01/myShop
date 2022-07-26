@@ -10,12 +10,12 @@ import java.util.ArrayList;
 public class ProdottoDAO implements IArticoloDAO{
     private static ProdottoDAO instance = new ProdottoDAO();
     private IArticolo prodotto;
-    private static IDbConnection connection;
+    //private static IDbConnection connection;
     private static ResultSet rs;
 
     private ProdottoDAO() {
         prodotto = null;
-        connection = null;
+        //connection = null;
         rs = null;
     }
 
@@ -26,7 +26,7 @@ public class ProdottoDAO implements IArticoloDAO{
     @Override
     public IArticolo findByName(String nome) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idprodotto, nome, costo, descrizione FROM myShop.prodotto WHERE nome = '" + nome + "';";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE nome = '" + nome + "';";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -36,11 +36,15 @@ public class ProdottoDAO implements IArticoloDAO{
                 ArticoloFactoryProvider.ArticoloType type = ArticoloFactoryProvider.ArticoloType.PRODOTTO;
                 ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
                 prodotto = factory.crea();
+                IProdotto prodotto1 = (IProdotto) prodotto;
 
                 prodotto.setNome(rs.getString("nome"));
                 prodotto.setPrezzo(rs.getFloat("costo"));
                 prodotto.setDescrizione(rs.getString("descrizione"));
                 prodotto.setId(rs.getInt("idprodotto"));
+                prodotto1.setCollocazione(CollocazioneDAO.getInstance().findById(rs.getInt("collocazione_idcollocazione")));
+                prodotto1.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
+                prodotto1.setProduttore(ProduttoreDAO.getInstance().findById(rs.getInt("produttore_idproduttore")));
 
                 return prodotto;
             }
@@ -50,8 +54,6 @@ public class ProdottoDAO implements IArticoloDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
-        } finally {
-            connection.close();
         }
 
         return null;
@@ -60,7 +62,7 @@ public class ProdottoDAO implements IArticoloDAO{
     @Override
     public ArrayList<IArticolo> findAll() {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idprodotto, nome, costo, descrizione FROM myShop.prodotto";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -70,11 +72,15 @@ public class ProdottoDAO implements IArticoloDAO{
                 ArticoloFactoryProvider.ArticoloType type = ArticoloFactoryProvider.ArticoloType.PRODOTTO;
                 ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
                 prodotto = factory.crea();
+                IProdotto prodotto1 = (IProdotto) prodotto;
 
                 prodotto.setNome(rs.getString("nome"));
                 prodotto.setPrezzo(rs.getFloat("costo"));
                 prodotto.setDescrizione(rs.getString("descrizione"));
                 prodotto.setId(rs.getInt("idprodotto"));
+                prodotto1.setCollocazione(CollocazioneDAO.getInstance().findById(rs.getInt("collocazione_idcollocazione")));
+                prodotto1.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
+                prodotto1.setProduttore(ProduttoreDAO.getInstance().findById(rs.getInt("produttore_idproduttore")));
 
                 prodotti.add(prodotto);
             }
@@ -85,8 +91,6 @@ public class ProdottoDAO implements IArticoloDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("Resultset: " + e.getMessage());
-        } finally {
-            connection.close();
         }
 
         return null;
@@ -96,7 +100,7 @@ public class ProdottoDAO implements IArticoloDAO{
     public int add(IArticolo articolo) {
         IProdotto prodotto1 = (IProdotto) articolo;
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.prodotto (nome, costo, descrizione, categoria_idcategoria, collocazione_idcollocazione, produttore_idproduttore) VALUES ('" + articolo.getNome() + "', '" + articolo.getPrezzo() + "', '" + articolo.getDescrizione() + "', '" + articolo.getCategoria().getId() + "', '" + prodotto1.getCollocazione().getId() + "', '" + prodotto1.getProduttore().getId() + "');";
+        String sql = "INSERT INTO myShop.prodotto (nome, costo, descrizione, categoria_idcategoria, collocazione_idcollocazione, produttore_idproduttore, main_composito) VALUES ('" + articolo.getNome() + "', '" + articolo.getPrezzo() + "', '" + articolo.getDescrizione() + "', '" + articolo.getCategoria().getId() + "', '" + prodotto1.getCollocazione().getId() + "', '" + prodotto1.getProduttore().getId() + "', + " + false + ");";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         int rowCount = 0;
@@ -106,9 +110,7 @@ public class ProdottoDAO implements IArticoloDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -117,7 +119,7 @@ public class ProdottoDAO implements IArticoloDAO{
     @Override
     public int removeById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "DELETE FROM myShop.prodotto WHERE idprodotto = '" + id + "';";
+        String sql = "DELETE FROM myShop.prodotto WHERE idprodotto = " + id + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         int rowCount = 0;
@@ -127,9 +129,7 @@ public class ProdottoDAO implements IArticoloDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -139,7 +139,7 @@ public class ProdottoDAO implements IArticoloDAO{
     public int update(IArticolo articolo) {
         IProdotto prodotto1 = (IProdotto) articolo;
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "UPDATE myShop.prodotto SET nome = '" + articolo.getNome() + "', costo = '" + articolo.getPrezzo() + "', descrizione = '" + articolo.getDescrizione() + "', categoria_idcategoria = '" + articolo.getCategoria().getId() + "', collocazione_idcollocazione = '" + prodotto1.getCollocazione().getId() + "', produttore_idproduttore = '" + prodotto1.getProduttore().getId() +"' WHERE idprodotto = '" + articolo.getId() + "';";
+        String sql = "UPDATE myShop.prodotto SET nome = '" + articolo.getNome() + "', costo = " + articolo.getPrezzo() + ", descrizione = '" + articolo.getDescrizione() + "', categoria_idcategoria = " + articolo.getCategoria().getId() + ", collocazione_idcollocazione = " + prodotto1.getCollocazione().getId() + ", produttore_idproduttore = " + prodotto1.getProduttore().getId() + " WHERE idprodotto = " + articolo.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
 
@@ -150,9 +150,7 @@ public class ProdottoDAO implements IArticoloDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-            connection.close();
+            e.getMessage();
         }
 
         return 0;
@@ -161,7 +159,7 @@ public class ProdottoDAO implements IArticoloDAO{
     @Override
     public IArticolo findById(int id){
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idprodotto, nome, costo, descrizione FROM myShop.prodotto WHERE idprodotto = '" + id + "';";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE idprodotto = '" + id + "';";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -171,11 +169,15 @@ public class ProdottoDAO implements IArticoloDAO{
                 ArticoloFactoryProvider.ArticoloType type = ArticoloFactoryProvider.ArticoloType.PRODOTTO;
                 ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
                 prodotto = factory.crea();
+                IProdotto prodotto1 = (IProdotto) prodotto;
 
                 prodotto.setNome(rs.getString("nome"));
                 prodotto.setPrezzo(rs.getFloat("costo"));
                 prodotto.setDescrizione(rs.getString("descrizione"));
                 prodotto.setId(rs.getInt("idprodotto"));
+                prodotto1.setCollocazione(CollocazioneDAO.getInstance().findById(rs.getInt("collocazione_idcollocazione")));
+                prodotto1.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
+                prodotto1.setProduttore(ProduttoreDAO.getInstance().findById(rs.getInt("produttore_idproduttore")));
 
                 return prodotto;
             }
@@ -185,8 +187,6 @@ public class ProdottoDAO implements IArticoloDAO{
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
-        } finally {
-            connection.close();
         }
 
         return null;

@@ -43,6 +43,9 @@ public class ListaAcquistoCliente extends ListaAcquisto{
         return servizi;
     }
 
+
+
+    @Override
     public void setIndirizzoSpedizione(String indirizzoSpedizione) {
         this.indirizzoSpedizione = indirizzoSpedizione;
     }

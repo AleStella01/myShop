@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ProdottoDAOTest {
     @Test
     public void findByNameTest(){
-        IArticolo articolo = ProdottoDAO.getInstance().findByName("tavolo");
+        IArticolo articolo = ProdottoDAO.getInstance().findByName("tavolino2");
         System.out.println(articolo);
         Assert.assertTrue(articolo instanceof Prodotto);
     }
@@ -35,7 +35,7 @@ public class ProdottoDAOTest {
 
         articolo.setNome("tavolino");
         articolo.setDescrizione("tavolino in acciaio");
-        articolo.setPrezzo(81.0F);
+        articolo.setPrezzo(83.0F);
         prodotto.setCollocazione(CollocazioneDAO.getInstance().findById(3));
         prodotto.setProduttore(ProduttoreDAO.getInstance().findById(3));
         prodotto.setCategoria(CategoriaDAO.getInstance().findById(2));
@@ -69,7 +69,7 @@ public class ProdottoDAOTest {
 
     @Test
     public void findByIdTest(){
-        IArticolo articolo = ProdottoDAO.getInstance().findById(4);
+        IArticolo articolo = ProdottoDAO.getInstance().findById(14);
         System.out.println(articolo);
         Assert.assertTrue(articolo instanceof Prodotto);
     }

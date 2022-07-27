@@ -6,6 +6,7 @@ import Model.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.RecursiveTask;
 
@@ -28,20 +29,28 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
     @Override
     public IArticolo findByName(String nome) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT * FROM myShop.prodotto AS p1 INNER JOIN myShop.prodotto_has_prodotto AS pc INNER JOIN myShop.prodotto AS p2 ON p1.idprodotto = pc.prodotto_idprodotto AND p2.idprodotto = pc.prodotto_idprodotto1 WHERE pc.nomeProdottoComposito = '" + nome.toLowerCase() + "';";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE nome = '" + nome + "' AND main_composito = 1;";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
+
         try {
-            ArticoloFactoryProvider.ArticoloType type = ArticoloFactoryProvider.ArticoloType.PRODOTTO_COMPOSITO;
-            ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
-            prodottoComposito = (ProdottoComposito) factory.crea();
-            while (rs.next()){
-                IArticoloDAO prodottoDAO = ProdottoDAO.getInstance();
-                IProdotto prodotto = (IProdotto) prodottoDAO.findById(rs.getInt("prodotto_idprodotto1"));
-                prodottoComposito.add(prodotto);
-                prodottoComposito.setNome(rs.getString("nomeProdottoComposito"));
+            rs.next();
+            if (rs.getRow() == 1){
+                ArticoloFactoryProvider.ArticoloType type = ArticoloFactoryProvider.ArticoloType.PRODOTTO_COMPOSITO;
+                ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
+                IArticolo articolo = factory.crea();
+                IProdotto prodotto1 = (IProdotto) articolo;
+
+                articolo.setNome(rs.getString("nome"));
+                articolo.setPrezzo(rs.getFloat("costo"));
+                articolo.setDescrizione(rs.getString("descrizione"));
+                articolo.setId(rs.getInt("idprodotto"));
+                prodotto1.setCollocazione(CollocazioneDAO.getInstance().findById(rs.getInt("collocazione_idcollocazione")));
+                prodotto1.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
+                prodotto1.setProduttore(ProduttoreDAO.getInstance().findById(rs.getInt("produttore_idproduttore")));
+
+                return articolo;
             }
-            return prodottoComposito;
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
             System.out.println("SQLState: " + e.getSQLState());
@@ -49,6 +58,7 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
         }
+
         return null;
     }
 
@@ -66,12 +76,11 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
                 ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
                 prodottoComposito = (ProdottoComposito) factory.crea();
 
-                prodottoComposito.setId(rs.getInt("idprodotto"));
                 prodottoComposito.setNome(rs.getString("nome"));
-                prodottoComposito.setPrezzo(rs.getFloat("costo"));
+                prodottoComposito.setId(rs.getInt("idprodotto"));
                 prodottoComposito.setDescrizione(rs.getString("descrizione"));
                 prodottoComposito.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
-                prodottoComposito.setProduttore(ProduttoreDAO.getInstance().findById(rs.getInt("produttore_idproduttore")));
+                prodottoComposito.setProduttore(ProduttoreDAO.getInstance().findById(5));
 
                 sql = "SELECT p.idprodotto FROM myShop.prodotto_has_prodotto AS pc INNER JOIN myShop.prodotto AS p ON pc.prodotto_idprodotto1 = p.idprodotto WHERE pc.prodotto_idprodotto = " + prodottoComposito.getId() + ";";
                 readOp = new ReadOperation(sql);
@@ -79,6 +88,7 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
                 while (rs1.next()){
                     prodottoComposito.add((IProdotto) ProdottoDAO.getInstance().findById(rs1.getInt("idprodotto")));
                 }
+                prodottoComposito.setPrezzo(prodottoComposito.getPrezzo());
                 prodottiCompositi.add(prodottoComposito);
             }
             return prodottiCompositi;
@@ -98,22 +108,14 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
         String sql = "INSERT INTO myShop.prodotto (nome, costo, descrizione, main_composito, categoria_idcategoria, collocazione_idcollocazione, produttore_idproduttore) VALUES ('" + articolo.getNome() + "', " + articolo.getPrezzo() + ", '" + articolo.getDescrizione() + "', 1, " + articolo.getCategoria().getId() + ", " + prodotto1.getCollocazione().getId() + ", " + prodotto1.getProduttore().getId() + ");";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
-
-        ListIterator<IProdotto> iterator = prodotto1.getSottoprodotti().listIterator();
-        while (iterator.hasNext()){
-            sql = "INSERT INTO myShop.prodotto_has_prodotto (prodotto_idprodotto, prodotto_idprodotto1) VALUES (" + prodottoComposito.getId() + ", " + prodotto1.getId() + ");";
-            writeOp = new WriteOperation(sql);
-            rs = executor.executeOperation(writeOp).getResultSet();
-        }
-
-        int rowCount = 0;
         try {
+            int rowCount = 0;
             rowCount = rs.getRow();
             return rowCount;
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            e.getMessage();
         }
         return 0;
     }
@@ -166,26 +168,89 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
     @Override
     public IArticolo findById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT * FROM myShop.prodotto AS p1 INNER JOIN myShop.prodotto_has_prodotto AS pc INNER JOIN myShop.prodotto AS p2 ON p1.idprodotto = pc.prodotto_idprodotto AND p2.idprodotto = pc.prodotto_idprodotto1 WHERE p1.idprodotto = " + id + ";";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE idprodotto = " + id + " AND main_composito = 1;";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
+
         try {
-            ArticoloFactoryProvider.ArticoloType type = ArticoloFactoryProvider.ArticoloType.PRODOTTO_COMPOSITO;
-            ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
-            prodottoComposito = (ProdottoComposito) factory.crea();
-            while (rs.next()){
-                IArticoloDAO prodottoDAO = ProdottoDAO.getInstance();
-                IProdotto prodotto = (IProdotto) prodottoDAO.findById(rs.getInt("prodotto_idprodotto1"));
-                prodottoComposito.add(prodotto);
-                prodottoComposito.setNome(rs.getString("nomeProdottoComposito"));
+            rs.next();
+            if (rs.getRow() == 1){
+                ArticoloFactoryProvider.ArticoloType type = ArticoloFactoryProvider.ArticoloType.PRODOTTO_COMPOSITO;
+                ArticoloAbstractFactory factory = ArticoloFactoryProvider.getFactory(type);
+                IArticolo articolo = factory.crea();
+                IProdotto prodotto1 = (IProdotto) articolo;
+
+                articolo.setNome(rs.getString("nome"));
+                articolo.setPrezzo(rs.getFloat("costo"));
+                articolo.setDescrizione(rs.getString("descrizione"));
+                articolo.setId(rs.getInt("idprodotto"));
+                prodotto1.setCollocazione(CollocazioneDAO.getInstance().findById(rs.getInt("collocazione_idcollocazione")));
+                prodotto1.setCategoria(CategoriaDAO.getInstance().findById(rs.getInt("categoria_idcategoria")));
+                prodotto1.setProduttore(ProduttoreDAO.getInstance().findById(rs.getInt("produttore_idproduttore")));
+
+                return articolo;
             }
-            return prodottoComposito;
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
             System.out.println("SQLState: " + e.getSQLState());
             System.out.println("VendorError: " + e.getErrorCode());
         } catch (NullPointerException e) {
             System.out.println("ResultSet: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public int addProdotto(IArticolo articolo, IProdotto prodotto){
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "INSERT INTO myShop.prodotto_has_prodotto (prodotto_idprodotto, prodotto_idprodotto1) VALUES (" + articolo.getId() + ", " + prodotto.getId() + ");";
+        IDbOperation writeOp = new WriteOperation(sql);
+        rs = executor.executeOperation(writeOp).getResultSet();
+        try {
+            int rowCount = 0;
+            rowCount = rs.getRow();
+            return rowCount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
+        return 0;
+    }
+
+    public int removeProdotto(IArticolo articolo, IProdotto prodotto){
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "DELETE FROM myShop.prodotto_has_prodotto WHERE prodotto_idprodotto = " + articolo.getId() + " AND prodotto_idprodotto1 = " + prodotto.getId() + ";";
+        IDbOperation writeOp = new WriteOperation(sql);
+        rs = executor.executeOperation(writeOp).getResultSet();
+        try {
+            int rowCount = 0;
+            rowCount = rs.getRow();
+            return rowCount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
+        return 0;
+    }
+
+    public List<IProdotto> getProdotti(IProdotto prodottoComposito){
+        DbOperationExecutor executor = new DbOperationExecutor();
+        String sql = "SELECT prodotto_idprodotto1 FROM prodotto_has_prodotto WHERE prodotto_idprodotto = " + prodottoComposito.getId() + ";";
+        IDbOperation readOp = new ReadOperation(sql);
+        rs = executor.executeOperation(readOp).getResultSet();
+
+        List<IProdotto> sottoprodotti = new ArrayList<>();
+        try {
+            while (rs.next()){
+                sottoprodotti.add((IProdotto) ProdottoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto1")));
+            }
+            return sottoprodotti;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e){
+            e.getMessage();
         }
         return null;
     }

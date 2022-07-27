@@ -14,12 +14,16 @@ public class ProdottoComposito extends Articolo implements IProdotto{
     }
 
     public void add(List<IProdotto> prodotti){
-        sottoprodotti.addAll(sottoprodotti);
+        sottoprodotti.addAll(prodotti);
     }
 
     @Override
     public Float getPrezzo() {
-        return null;
+        Float prezzo = 0F;
+        for (IProdotto p : sottoprodotti){
+            prezzo += p.getPrezzo();
+        }
+        return prezzo;
     }
 
     @Override
@@ -34,12 +38,12 @@ public class ProdottoComposito extends Articolo implements IProdotto{
 
     @Override
     public CollocazioneProdotto getCollocazione() {
-        return null;
+        return this.collocazione;
     }
 
     @Override
     public void setCollocazione(Collocazione c) {
-
+        this.collocazione = (CollocazioneProdotto) c;
     }
 
     @Override

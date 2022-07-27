@@ -257,8 +257,7 @@ public class CategoriaDAO implements ICategoriaDAO{
         ArrayList<ICategoria> categorie = new ArrayList<>();
         try{
             while (rs.next()){
-                ICategoria c = findById(rs.getInt("categoria_idcategoria"));
-                System.out.println(c);
+                ICategoria c = findById(rs.getInt("categoria_idcategoria1"));
                 categorie.add(c);
             }
             return categorie;

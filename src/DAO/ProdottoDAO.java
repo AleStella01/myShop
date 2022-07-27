@@ -26,7 +26,7 @@ public class ProdottoDAO implements IArticoloDAO{
     @Override
     public IArticolo findByName(String nome) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE nome = '" + nome + "';";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE nome = '" + nome + "' AND main_composito = 0;";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -62,7 +62,7 @@ public class ProdottoDAO implements IArticoloDAO{
     @Override
     public ArrayList<IArticolo> findAll() {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE main_composito = 0";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -159,7 +159,7 @@ public class ProdottoDAO implements IArticoloDAO{
     @Override
     public IArticolo findById(int id){
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE idprodotto = '" + id + "';";
+        String sql = "SELECT idprodotto, nome, costo, descrizione, collocazione_idcollocazione, categoria_idcategoria, produttore_idproduttore FROM myShop.prodotto WHERE idprodotto = '" + id + "' AND main_composito = 0;";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 

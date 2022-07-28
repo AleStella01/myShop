@@ -63,8 +63,8 @@ public class ListaAcquistoDAOTest {
 
     @Test
     public void addProdottoTest(){
-        IArticolo prodotto = ProdottoDAO.getInstance().findById(4);
-        ListaAcquisto lista = ListaAcquistoDAO.getInstance().findById(2);
+        IArticolo prodotto = ProdottoDAO.getInstance().findById(1);
+        ListaAcquisto lista = ListaAcquistoDAO.getInstance().findById(6);
 
         System.out.println(lista);
 
@@ -75,8 +75,8 @@ public class ListaAcquistoDAOTest {
 
     @Test
     public void addServizioTest(){
-        ListaAcquisto lista = ListaAcquistoDAO.getInstance().findById(2);
-        IArticolo servizio = ServizioDAO.getInstance().findById(1);
+        ListaAcquisto lista = ListaAcquistoDAO.getInstance().findById(6);
+        IArticolo servizio = ServizioDAO.getInstance().findById(2);
         String indirizzo = "ciao";
         ListaAcquistoDAO.getInstance().addServizio(lista, servizio, indirizzo);
     }
@@ -115,7 +115,7 @@ public class ListaAcquistoDAOTest {
         ListaAcquistoFactory factory = new ListaAcquistoFactory();
         ListaAcquisto lista = factory.getListaAcquistoFactory(type);
 
-        lista.setCliente(UtenteDAO.getInstance().findById("ndepascali"));
+        lista.setCliente(UtenteDAO.getInstance().findById("astella"));
         lista.setPuntoVendita(PuntoVenditaDAO.getInstance().findById(6));
 
         ListaAcquistoDAO.getInstance().add(lista);

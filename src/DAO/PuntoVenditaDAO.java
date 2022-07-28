@@ -98,12 +98,12 @@ public class PuntoVenditaDAO implements IPuntoVenditaDAO{
                 }
                 puntoVendita.setProdottiVenduti(prodottiVenduti);
 
-//                sql = "SELECT prodotto_idprodotto, quantità FROM puntoVendita_has_prodotto AS pv INNER JOIN prodotto AS p ON p.idprodotto = pv.prodotto_idprodotto WHERE p.main_composito = 1 AND puntoVendita_idpuntoVendita = " + id + ";";
-//                readOp = new ReadOperation(sql);
-//                rs = executor.executeOperation(readOp).getResultSet();
-//                while (rs.next()){
-//                    prodottiVenduti.put((IProdotto) ProdottoCompositoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantita"));
-//                }
+                sql = "SELECT prodotto_idprodotto, quantita FROM puntoVendita_has_prodotto AS pv INNER JOIN prodotto AS p ON p.idprodotto = pv.prodotto_idprodotto WHERE p.main_composito = 1 AND puntoVendita_idpuntoVendita = " + puntoVendita.getId() + ";";
+                readOp = new ReadOperation(sql);
+                rs = executor.executeOperation(readOp).getResultSet();
+                while (rs.next()){
+                    prodottiVenduti.put((IProdotto) ProdottoCompositoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantita"));
+                }
 
                 return puntoVendita;
             }

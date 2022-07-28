@@ -35,9 +35,8 @@ public class CategoriaDAOTest {
     public void getSubCategorieTest(){
         ICategoria categoria = CategoriaDAO.getInstance().findById(1);
         ArrayList<ICategoria> sottocategorie = CategoriaDAO.getInstance().getSubCategorie(categoria);
-        System.out.println("SOTTOCATEGORIE:");
-        for (ICategoria c : sottocategorie)
-            System.out.println(c);
+        categoria.add(sottocategorie);
+        System.out.println(categoria);
     }
 
     @Test

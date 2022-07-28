@@ -66,6 +66,7 @@ public class CategoriaProdotto implements ICategoria{
         return "CategoriaProdotto{" +
                 "nome='" + nome + '\'' +
                 ", id=" + id +
+                ", sottocategorie=" + sottocategorie +
                 '}';
     }
 }

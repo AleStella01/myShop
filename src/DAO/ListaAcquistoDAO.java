@@ -26,7 +26,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public ArrayList<ListaAcquisto> findByUser(IUtente utente) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita FROM myShop.listaAcquisto WHERE utente_idutente = '" + utente.getId() + "';";
+        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita, pagato FROM myShop.listaAcquisto WHERE utente_idutente = '" + utente.getId() + "';";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -40,6 +40,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
                 listaAcquisto.setId(rs.getInt("idlistaAcquisto"));
                 listaAcquisto.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
                 listaAcquisto.setPuntoVendita(PuntoVenditaDAO.getInstance().findById(rs.getInt("puntoVendita_idpuntoVendita")));
+                listaAcquisto.setPagato(rs.getBoolean("pagato"));
 
                 liste.add(listaAcquisto);
             }
@@ -55,7 +56,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public ArrayList<ListaAcquisto> findAll() {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita FROM myShop.listaAcquisto;";
+        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita, pagato FROM myShop.listaAcquisto;";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -69,14 +70,14 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
                 listaAcquisto.setId(rs.getInt("idlistaAcquisto"));
                 listaAcquisto.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
                 listaAcquisto.setPuntoVendita(PuntoVenditaDAO.getInstance().findById(rs.getInt("puntoVendita_idpuntoVendita")));
-
+                listaAcquisto.setPagato(rs.getBoolean("pagato"));
                 liste.add(listaAcquisto);
             }
             return liste;
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            e.getMessage();
         }
         return null;
     }
@@ -84,7 +85,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public ListaAcquisto findById(int id) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita FROM myShop.listaAcquisto WHERE idlistaAcquisto = " + id +  ";";
+        String sql = "SELECT idlistaAcquisto, utente_idutente, puntoVendita_idpuntoVendita, pagato FROM myShop.listaAcquisto WHERE idlistaAcquisto = " + id +  ";";
         IDbOperation readOp = new ReadOperation(sql);
         rs = executor.executeOperation(readOp).getResultSet();
 
@@ -98,6 +99,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
                 listaAcquisto.setId(rs.getInt("idlistaAcquisto"));
                 listaAcquisto.setCliente(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
                 listaAcquisto.setPuntoVendita(PuntoVenditaDAO.getInstance().findById(rs.getInt("puntoVendita_idpuntoVendita")));
+                listaAcquisto.setPagato(rs.getBoolean("pagato"));
 
                 return listaAcquisto;
             }
@@ -112,7 +114,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public int add(ListaAcquisto listaAcquisto) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.listaAcquisto (utente_idutente, puntoVendita_idpuntoVendita) VALUES ('" + listaAcquisto.getCliente().getId() + "', '" + listaAcquisto.getPuntoVendita().getId() + "');";
+        String sql = "INSERT INTO myShop.listaAcquisto (utente_idutente, puntoVendita_idpuntoVendita, pagato) VALUES ('" + listaAcquisto.getCliente().getId() + "', '" + listaAcquisto.getPuntoVendita().getId() + "', " + listaAcquisto.isPagato() + ");";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
 
@@ -151,7 +153,7 @@ public class ListaAcquistoDAO implements IListaAcquistoDAO{
     @Override
     public int update(ListaAcquisto listaAcquisto) {
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "UPDATE myShop.listaAcquisto SET utente_idutente = " + listaAcquisto.getCliente().getId() + ", puntoVendita_idpuntoVendita = " + listaAcquisto.getPuntoVendita().getId() + " WHERE idlistaAcquisto = " + listaAcquisto.getId() + ";";
+        String sql = "UPDATE myShop.listaAcquisto SET utente_idutente = " + listaAcquisto.getCliente().getId() + ", puntoVendita_idpuntoVendita = " + listaAcquisto.getPuntoVendita().getId() + ", pagato = " + listaAcquisto.isPagato() + " WHERE idlistaAcquisto = " + listaAcquisto.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {

@@ -8,10 +8,12 @@ import java.util.Map;
 public class ListaAcquistoCliente extends ListaAcquisto{
     private String indirizzoSpedizione;
     private List<IArticolo> servizi;
+    boolean pagato;
 
     public ListaAcquistoCliente() {
         prodotti = new HashMap<>();
         servizi = new ArrayList<>();
+        pagato = false;
     }
 
     public Map<IProdotto, Integer> getProdotti() {
@@ -72,5 +74,13 @@ public class ListaAcquistoCliente extends ListaAcquisto{
                 ", indirizzoSpedizione='" + indirizzoSpedizione + '\'' +
                 ", servizi=" + servizi +
                 '}';
+    }
+
+    public boolean isPagato() {
+        return pagato;
+    }
+
+    public void setPagato(boolean pagato) {
+        this.pagato = pagato;
     }
 }

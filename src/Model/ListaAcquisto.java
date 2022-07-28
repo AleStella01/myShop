@@ -16,6 +16,8 @@ public abstract class ListaAcquisto {
     public abstract String getIndirizzoSpedizione();
     public abstract List<IArticolo> getServizi();
     public abstract void setIndirizzoSpedizione(String indirizzoSpedizione);
+    public abstract boolean isPagato();
+    public abstract void setPagato(boolean pagato);
 
 
     public IUtente getCliente() {

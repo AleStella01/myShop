@@ -53,7 +53,8 @@ public class ListaListener implements ActionListener {
         sud.setLayout(new FlowLayout());
         east.setLayout(new FlowLayout());
         west.setLayout(new FlowLayout());
-        centro.setLayout(new FlowLayout());
+        centro.setLayout(new GridLayout(liste.size() + 1,7));
+        JScrollPane scrollPane=new JScrollPane(centro);
 
         JFrame finestra=new JFrame();
         finestra.setSize(600,700);
@@ -64,40 +65,63 @@ public class ListaListener implements ActionListener {
         c.add(sud,BorderLayout.SOUTH);
         c.add(east,BorderLayout.EAST);
         c.add(west,BorderLayout.WEST);
-        c.add(centro,BorderLayout.CENTER);
+        //c.add(centro,BorderLayout.CENTER);
+        c.add(scrollPane,BorderLayout.CENTER);
+
+
+        centro.add(new JLabel("LISTA DI:  "));
+        centro.add(new JLabel("PRODOTTI  "));
+        centro.add(new JLabel("SERVIZI  "));
+        centro.add(new JLabel("STATO LISTA"));
+        centro.add(new JLabel("ACQUISTA"));
+        centro.add(new JLabel("COMMENTA"));
+        centro.add(new JLabel("RIMUOVI"));
+
 
         int i=1;
 
         ListIterator<ListaAcquisto> listIterator=liste.listIterator();
         while (listIterator.hasNext()){
+            String prodotti = "";
+            String servizi = "";
             ListaAcquisto lista = listIterator.next();
+
+            Map<IProdotto, Integer> prodottiMap = ListaAcquistoDAO.getInstance().getProdotti(lista);
+            Iterator<Map.Entry<IProdotto, Integer>> mapIterator = prodottiMap.entrySet().iterator();
+            while (mapIterator.hasNext()){
+                Map.Entry<IProdotto, Integer> entry = mapIterator.next();
+                lista.addProdotto(entry.getKey(), entry.getValue());
+                prodotti = prodotti + "" + entry.getKey().getNome() + ",\n";
+            }
+
+            List<IArticolo> serviziList = ListaAcquistoDAO.getInstance().getServizi(lista);
+            ListIterator<IArticolo> serviziIterator = serviziList.listIterator();
+            while (serviziIterator.hasNext()){
+                IArticolo servizio2 = serviziIterator.next();
+                lista.addServizio(servizio2);
+                servizi = servizi + "" + servizio2.getNome() + ",\n";
+            }
+
             centro.add(new JLabel(lista.getCliente().getUsername()));
             //List<RigaCatalogo> righePerListener=new ArrayList<>();
             //righePerListener=righeEffettive;
             //System.out.println("Dimensione catalòoghiiii: " + lista.getRigheCatalogo().size());
 
-            Iterator<Map.Entry<IProdotto,Integer>> lprodotti = lista.getProdotti().entrySet().iterator();
+
            // List<IArticolo> prodotti=;
            // ListIterator<IProdotto> lprodotti=prodotti.listIterator();
-            while (lprodotti.hasNext()){
-                Map.Entry<IProdotto,Integer> entry=lprodotti.next();
-                IProdotto prodotto= entry.getKey();
-               centro.add(new JLabel("Nome prodotto: " + prodotto.getNome()));
-               centro.add(new JLabel("Prezzo: " + prodotto.getPrezzo()));
-            }
-                centro.add(new JLabel("Servizi: "));
+
+            centro.add(new JLabel(prodotti));
+
+
                 if(lista.getServizi().size()==0){
                     centro.add(new JLabel(" Nessun servizio"));
-                }
-                ListIterator<IArticolo> servizioListIterator1=lista.getServizi().listIterator();
-                while (servizioListIterator1.hasNext()){
-                    Servizio servizioEffettivo= (Servizio) servizioListIterator1.next();
-                    centro.add(new JLabel("  Nome servizio:  "+servizioEffettivo.getNome()));
-                    centro.add(new JLabel("  Prezzo servizio: " +servizioEffettivo.getPrezzo()));
+                }else{
+                    centro.add(new JLabel(servizi));
                 }
 
 
-            centro.add(new JLabel("  Stato lista: " + lista.isPagato()));
+            centro.add(new JLabel(String.valueOf(lista.isPagato())));
             if(!lista.isPagato()){
                 JButton acquista = new JButton("Acquista");
                 acquista.addActionListener(new ActionListener() {
@@ -123,7 +147,7 @@ public class ListaListener implements ActionListener {
                            else{
                                int quantita=catalogoPanel.getPuntoVendita().getProdottiVenduti().get(prodotto);
                                puntoVenditaDAO.removeProdottoVenduto(catalogoPanel.getPuntoVendita(), prodotto);
-                               puntoVenditaDAO.addProdottoVenduto(catalogoPanel.getPuntoVendita(), prodotto,catalogoPanel.getPuntoVendita().getProdottiVenduti().get(prodotto));
+                               puntoVenditaDAO.addProdottoVenduto(catalogoPanel.getPuntoVendita(), prodotto,catalogoPanel.getPuntoVendita().getProdottiVenduti().get(prodotto) - quantita);
                            }
                         }
 
@@ -214,6 +238,7 @@ public class ListaListener implements ActionListener {
                     }
                 });
                 centro.add(acquista);
+
             }
             else {
                 JButton acquista=new JButton("Acquista di nuovo");
@@ -222,13 +247,15 @@ public class ListaListener implements ActionListener {
                     public void actionPerformed(ActionEvent e) {
                         Iterator<Map.Entry<IProdotto, Integer>> righeEffIterator = lista.getProdotti().entrySet().iterator();
                         while (righeEffIterator.hasNext()){
-                            boolean presente;
+                            boolean presente=false;
                             Map.Entry<IProdotto, Integer> entry = righeEffIterator.next();
 
                             IArticolo articolo=prodottoDAO.findByName(entry.getKey().getNome());
                             IProdotto prodotto=(IProdotto) articolo;
                             IPuntoVendita puntoVendita = CatalogoPanel.getInstance().getPuntoVendita();
-                            presente = puntoVendita.getProdottiVenduti().containsKey(prodotto);
+                            presente = puntoVendita.getProdottiVenduti().containsKey(articolo);
+
+
 
                             if(!presente){
                                 JOptionPane.showMessageDialog(null,"Il prodotto " + entry.getKey().getNome() + " non è più presente nel catalogo");
@@ -241,10 +268,9 @@ public class ListaListener implements ActionListener {
                             else{
                                 int quantita= puntoVendita.getProdottiVenduti().get(prodotto);
                                 puntoVenditaDAO.removeProdottoVenduto(puntoVendita, prodotto);
-                                puntoVenditaDAO.addProdottoVenduto(puntoVendita, prodotto, puntoVendita.getProdottiVenduti().get(prodotto));
+                                puntoVenditaDAO.addProdottoVenduto(puntoVendita, prodotto, puntoVendita.getProdottiVenduti().get(prodotto)-quantita);
                             }
                         }
-
                         Float costoTotale = 0F;
                         Iterator<Map.Entry<IProdotto, Integer>> entryIterator = lista.getProdotti().entrySet().iterator();
                         while (entryIterator.hasNext()){
@@ -261,14 +287,13 @@ public class ListaListener implements ActionListener {
                         JOptionPane.showMessageDialog(null,"Puoi dirigerti alla cassa per pagare");
                     }
                 });
-                JButton commenta= new JButton("Commenta prodotti");
-
-
-                CommentoListener commentoListener=new CommentoListener(lista);
-                commenta.addActionListener(commentoListener);
                 centro.add(acquista);
-                centro.add(commenta);
             }
+
+            JButton commenta= new JButton("Commenta prodotti");
+            CommentoListener commentoListener=new CommentoListener(lista);
+            commenta.addActionListener(commentoListener);
+            centro.add(commenta);
 
             JButton rimuovi=new JButton("Rimuovi lista");
             rimuovi.addActionListener(new ActionListener() {
@@ -282,12 +307,12 @@ public class ListaListener implements ActionListener {
                 }
             });
 
+            finestra.repaint();
+            finestra.revalidate();
+
             centro.add(rimuovi);
             i++;
         }
-
-
-
 
         JButton rimuoviTutto = new JButton("Rimuovi tutte le liste");
         rimuoviTutto.addActionListener(new ActionListener() {
@@ -301,10 +326,6 @@ public class ListaListener implements ActionListener {
         });
 
         sud.add(rimuoviTutto);
-
-
-
-
 
         finestra.setVisible(true);
         finestra.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

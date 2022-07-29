@@ -98,7 +98,7 @@ public class CarrelloListener implements ActionListener {
 
 
 
-            JButton acquista=new JButton("Procedi all'acquisto");
+            //JButton acquista=new JButton("Procedi all'acquisto");
             JButton svuota=new JButton("Svuota carrello");
             JButton lista=new JButton("Genera lista d'acquisto");
             svuota.addActionListener(new ActionListener() {
@@ -170,6 +170,8 @@ public class CarrelloListener implements ActionListener {
                             listaAcquistoDAO.addServizio(listaAcquisto2, servizio, listaAcquisto2.getIndirizzoSpedizione());
                         }
                         listaAcquisto=listaAcquisto2;
+                        DocumentoListaAcquisto documentoListaAcquisto=new DocumentoListaAcquisto(new PdfBoxAPI(), listaAcquisto2);
+                        documentoListaAcquisto.invia(u.getEmail());
                         JOptionPane.showMessageDialog(null,"Lista generata correttamente");
                     }else {
                         JOptionPane.showMessageDialog(null,"Lista non generata");
@@ -177,143 +179,143 @@ public class CarrelloListener implements ActionListener {
                 }
             });
 
-            acquista.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if(righeSelezionate.size()>0){
-                        ListaAcquistoFactory.ListaAcquistoType type = ListaAcquistoFactory.ListaAcquistoType.CLIENTE;
-                        ListaAcquistoFactory factory = new ListaAcquistoFactory();
-                        ListaAcquisto listaAcquisto2 = factory.getListaAcquistoFactory(type);
-
-                        JFrame frame=new JFrame();
-                        JPanel west=new JPanel();
-                        west.setLayout(new GridLayout(10,1));
-                        JPanel north=new JPanel();
-                        north.setLayout(new GridLayout(10,1));
-                        Container container=frame.getContentPane();
-                        container.setLayout(new BorderLayout());
-                        container.add(west,BorderLayout.CENTER);
-                        container.add(north,BorderLayout.WEST);
-
-                        JButton bottoneServizi=new JButton("Inserisci servizi");
-                        west.add(bottoneServizi);
-                        frame.setTitle("Vuoi aggiungere dei servizi altuo ordine?");
-                        frame.setBounds(100,100,400,200);
-                        frame.setVisible(true);
-                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                        frame.revalidate();
-                        frame.repaint();
-
-
-                        ListIterator<IArticolo> servizioListIterator=servizi.listIterator();
-                        while (servizioListIterator.hasNext()){
-                            Servizio servizio=(Servizio) servizioListIterator.next();
-                            JRadioButton jRadioButton1=new JRadioButton(servizio.getNome()+" Prezzo: " + servizio.getPrezzo());
-                            north.add(jRadioButton1);
-
-                            bottoneServizi.addActionListener(new ActionListener() {
-
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    if(jRadioButton1.isSelected()){
-                                        //Elimino eventuali duplicati
-                                        List<IArticolo> serviziEffettivi=listaAcquisto2.getServizi().stream().distinct().collect(Collectors.toList());
-                                        for(int i = 0; i < serviziEffettivi.size(); i++){
-                                            listaAcquisto2.addServizio(serviziEffettivi.get(i));
-                                        }
-                                        listaAcquistoDAO.addServizio(listaAcquisto2,servizio, u.getIndirizzo());
-                                        JOptionPane.showMessageDialog(null,"Servizio: " + servizio.getNome()+ " inserito correttamente");
-                                    }
-                                }
-                            });
-                        }
-
-                        JButton avanti=new JButton("Avanti");
-                        avanti.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                frame.dispose();
-
-                                listaAcquisto2.setCliente(u);
-
-                                ListIterator<RigaCatalogo> righeEffIterator= righeEffettive.listIterator();
-                                while (righeEffIterator.hasNext()){
-                                    RigaCatalogo ri2=righeEffIterator.next();
-                                    IArticolo articolo=prodottoDAO.findByName(ri2.getNomeProdotto());
-                                    IProdotto prodotto=(IProdotto) articolo;
-                                    listaAcquisto2.addProdotto(prodotto,ri2.getQuantitaInserita());
-                                    CatalogoPanel catalogoPanel=CatalogoPanel.getInstance();
-                                    int quantita=catalogoPanel.getPuntoVendita().getProdottiVenduti().get(prodotto);
-                                    catalogoPanel.getPuntoVendita().getProdottiVenduti().replace(prodotto,quantita-ri2.getQuantitaInserita());
-                                    puntoVenditaDAO.removeProdottoVenduto(catalogoPanel.getPuntoVendita(), prodotto);
-                                    puntoVenditaDAO.addProdottoVenduto(catalogoPanel.getPuntoVendita(), prodotto,catalogoPanel.getPuntoVendita().getProdottiVenduti().get(prodotto));
-                                    listaAcquistoDAO.addProdotto(listaAcquisto2,articolo,ri2.getQuantitaInserita());
-
-                                }
-
-                                listaAcquisto2.setPagato(true);
-
-                                float somma2=0;
-                                ListIterator<RigaCatalogo> listIterator = righeSelezionate.listIterator();
-                                while (listIterator.hasNext()){
-                                    RigaCatalogo rigaCatalogo=listIterator.next();
-                                    somma2 = somma2 + rigaCatalogo.getPrezzo();
-                                }
-
-                                listaAcquisto2.setCliente(u);
-
-                                listaAcquisto=listaAcquisto2;
-
-                                listaAcquistoDAO.update(listaAcquisto2);
-                                DocumentoListaAcquisto documentoListaAcquisto=new DocumentoListaAcquisto(new PdfBoxAPI(), listaAcquisto2);
-                                documentoListaAcquisto.invia(u.getEmail());
-                                //MailHelper mailHelper=new MailHelper();
-                                //mailHelper.send("nicdepascali@gmail.com", "MyShop","Prova");
-
-                                Float costoTotale = 0F;
-                                Iterator<Map.Entry<IProdotto, Integer>> entryIterator = listaAcquisto2.getProdotti().entrySet().iterator();
-                                while (entryIterator.hasNext()){
-                                    Map.Entry<IProdotto, Integer> entry = entryIterator.next();
-                                    costoTotale += entry.getKey().getPrezzo() * entry.getValue();
-                                }
-
-                                ListIterator<IArticolo> serviziIterator = listaAcquisto2.getServizi().listIterator();
-                                while (serviziIterator.hasNext()){
-                                    IArticolo a = serviziIterator.next();
-                                    costoTotale += a.getPrezzo();
-                                }
-
-                                JOptionPane.showMessageDialog(null,"Lista generata correttamente");
-                                JOptionPane.showMessageDialog(null,"Il costo è di : " + costoTotale + " Dirigiti alla cassa per effettuare il pagamento");
-
-
-                                somma=0;
-                                righeSelezionate.clear();
-
-
-
-                                centro.removeAll();
-                                finestra.revalidate();
-                                finestra.repaint();
-
-                            }
-                        });
-                        west.add(avanti);
-
-
-
-
-
-
-
-
-                    }else {
-                        JOptionPane.showMessageDialog(null,"Lista non generata");
-
-                    }
-
-                }
-            });
+//            acquista.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    if(righeSelezionate.size()>0){
+//                        ListaAcquistoFactory.ListaAcquistoType type = ListaAcquistoFactory.ListaAcquistoType.CLIENTE;
+//                        ListaAcquistoFactory factory = new ListaAcquistoFactory();
+//                        ListaAcquisto listaAcquisto2 = factory.getListaAcquistoFactory(type);
+//
+//                        JFrame frame=new JFrame();
+//                        JPanel west=new JPanel();
+//                        west.setLayout(new GridLayout(10,1));
+//                        JPanel north=new JPanel();
+//                        north.setLayout(new GridLayout(10,1));
+//                        Container container=frame.getContentPane();
+//                        container.setLayout(new BorderLayout());
+//                        container.add(west,BorderLayout.CENTER);
+//                        container.add(north,BorderLayout.WEST);
+//
+//                        JButton bottoneServizi=new JButton("Inserisci servizi");
+//                        west.add(bottoneServizi);
+//                        frame.setTitle("Vuoi aggiungere dei servizi altuo ordine?");
+//                        frame.setBounds(100,100,400,200);
+//                        frame.setVisible(true);
+//                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//                        frame.revalidate();
+//                        frame.repaint();
+//
+//
+//                        ListIterator<IArticolo> servizioListIterator=servizi.listIterator();
+//                        while (servizioListIterator.hasNext()){
+//                            Servizio servizio=(Servizio) servizioListIterator.next();
+//                            JRadioButton jRadioButton1=new JRadioButton(servizio.getNome()+" Prezzo: " + servizio.getPrezzo());
+//                            north.add(jRadioButton1);
+//
+//                            bottoneServizi.addActionListener(new ActionListener() {
+//
+//                                @Override
+//                                public void actionPerformed(ActionEvent e) {
+//                                    if(jRadioButton1.isSelected()){
+//                                        //Elimino eventuali duplicati
+//                                        List<IArticolo> serviziEffettivi=listaAcquisto2.getServizi().stream().distinct().collect(Collectors.toList());
+//                                        for(int i = 0; i < serviziEffettivi.size(); i++){
+//                                            listaAcquisto2.addServizio(serviziEffettivi.get(i));
+//                                        }
+//                                        listaAcquistoDAO.addServizio(listaAcquisto2,servizio, u.getIndirizzo());
+//                                        JOptionPane.showMessageDialog(null,"Servizio: " + servizio.getNome()+ " inserito correttamente");
+//                                    }
+//                                }
+//                            });
+//                        }
+//
+//                        JButton avanti=new JButton("Avanti");
+//                        avanti.addActionListener(new ActionListener() {
+//                            @Override
+//                            public void actionPerformed(ActionEvent e) {
+//                                frame.dispose();
+//
+//                                listaAcquisto2.setCliente(u);
+//
+//                                ListIterator<RigaCatalogo> righeEffIterator= righeEffettive.listIterator();
+//                                while (righeEffIterator.hasNext()){
+//                                    RigaCatalogo ri2=righeEffIterator.next();
+//                                    IArticolo articolo=prodottoDAO.findByName(ri2.getNomeProdotto());
+//                                    IProdotto prodotto=(IProdotto) articolo;
+//                                    listaAcquisto2.addProdotto(prodotto,ri2.getQuantitaInserita());
+//                                    CatalogoPanel catalogoPanel=CatalogoPanel.getInstance();
+//                                    int quantita=catalogoPanel.getPuntoVendita().getProdottiVenduti().get(prodotto);
+//                                    catalogoPanel.getPuntoVendita().getProdottiVenduti().replace(prodotto,quantita-ri2.getQuantitaInserita());
+//                                    puntoVenditaDAO.removeProdottoVenduto(catalogoPanel.getPuntoVendita(), prodotto);
+//                                    puntoVenditaDAO.addProdottoVenduto(catalogoPanel.getPuntoVendita(), prodotto,catalogoPanel.getPuntoVendita().getProdottiVenduti().get(prodotto));
+//                                    listaAcquistoDAO.addProdotto(listaAcquisto2,articolo,ri2.getQuantitaInserita());
+//
+//                                }
+//
+//                                listaAcquisto2.setPagato(true);
+//
+//                                float somma2=0;
+//                                ListIterator<RigaCatalogo> listIterator = righeSelezionate.listIterator();
+//                                while (listIterator.hasNext()){
+//                                    RigaCatalogo rigaCatalogo=listIterator.next();
+//                                    somma2 = somma2 + rigaCatalogo.getPrezzo();
+//                                }
+//
+//                                listaAcquisto2.setCliente(u);
+//
+//                                listaAcquisto=listaAcquisto2;
+//
+//                                listaAcquistoDAO.update(listaAcquisto2);
+//                                DocumentoListaAcquisto documentoListaAcquisto=new DocumentoListaAcquisto(new PdfBoxAPI(), listaAcquisto2);
+//                                documentoListaAcquisto.invia(u.getEmail());
+//                                //MailHelper mailHelper=new MailHelper();
+//                                //mailHelper.send("nicdepascali@gmail.com", "MyShop","Prova");
+//
+//                                Float costoTotale = 0F;
+//                                Iterator<Map.Entry<IProdotto, Integer>> entryIterator = listaAcquisto2.getProdotti().entrySet().iterator();
+//                                while (entryIterator.hasNext()){
+//                                    Map.Entry<IProdotto, Integer> entry = entryIterator.next();
+//                                    costoTotale += entry.getKey().getPrezzo() * entry.getValue();
+//                                }
+//
+//                                ListIterator<IArticolo> serviziIterator = listaAcquisto2.getServizi().listIterator();
+//                                while (serviziIterator.hasNext()){
+//                                    IArticolo a = serviziIterator.next();
+//                                    costoTotale += a.getPrezzo();
+//                                }
+//
+//                                JOptionPane.showMessageDialog(null,"Lista generata correttamente");
+//                                JOptionPane.showMessageDialog(null,"Il costo è di : " + costoTotale + " Dirigiti alla cassa per effettuare il pagamento");
+//
+//
+//                                somma=0;
+//                                righeSelezionate.clear();
+//
+//
+//
+//                                centro.removeAll();
+//                                finestra.revalidate();
+//                                finestra.repaint();
+//
+//                            }
+//                        });
+//                        west.add(avanti);
+//
+//
+//
+//
+//
+//
+//
+//
+//                    }else {
+//                        JOptionPane.showMessageDialog(null,"Lista non generata");
+//
+//                    }
+//
+//                }
+//            });
 
 
             ListIterator<RigaCatalogo> listIterator = righeSelezionate.listIterator();
@@ -327,7 +329,7 @@ public class CarrelloListener implements ActionListener {
 
 
             sud.add(lista);
-            sud.add(acquista);
+            //sud.add(acquista);
             sud.add(svuota);
 
             finestra.revalidate();

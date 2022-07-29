@@ -99,20 +99,20 @@ public class SchiedaIniziale extends JFrame {
         if(u instanceof Cliente) {
             //decoriamo il menu usando il ClienteMenuDecorator
            GuestMenu guestMenu = new GuestMenu(this);
-            ClienteMenuDecorator clienteMenu = new ClienteMenuDecorator(guestMenu);
+            ClienteMenuDecorator clienteMenu = new ClienteMenuDecorator(guestMenu,centro);
             for(JButton btn : clienteMenu.getPulsanti())
                 west.add(btn);
 
         }
         else if(u instanceof Manager){
             GuestMenu guestMenu = new GuestMenu(this);
-            ClienteMenuDecorator clienteMenu=new ClienteMenuDecorator(guestMenu);
+            ClienteMenuDecorator clienteMenu=new ClienteMenuDecorator(guestMenu,centro);
             ManagerMenuDecorator managerMenu = new ManagerMenuDecorator(guestMenu,clienteMenu);
             for(JButton btn : managerMenu.getPulsanti())
                 west.add(btn);
         }else if(u instanceof Admin){
             GuestMenu guestMenu = new GuestMenu(this);
-            ClienteMenuDecorator clienteMenu=new ClienteMenuDecorator(guestMenu);
+            ClienteMenuDecorator clienteMenu=new ClienteMenuDecorator(guestMenu,centro);
             AmministratoreMenuDecorator amministratoreMenu = new AmministratoreMenuDecorator(guestMenu,clienteMenu);
             for(JButton btn : amministratoreMenu.getPulsanti())
                 west.add(btn);

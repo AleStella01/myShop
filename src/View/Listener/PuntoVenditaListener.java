@@ -1,6 +1,7 @@
 package View.Listener;
 
 import DAO.ProdottoDAO;
+import DAO.PuntoVenditaDAO;
 import DAO.UtenteDAO;
 import Model.*;
 
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -51,6 +53,7 @@ public class PuntoVenditaListener implements ActionListener {
         String username= JOptionPane.showInputDialog(null,"Inserisci username");
         if(username == null || "".equals(username))
             return;
+        manager.setUsername(username);
         ListIterator<IUtente> iterator1= utenti.listIterator();
         while (iterator1.hasNext()){
             Utente utente1=(Utente) iterator1.next();
@@ -80,12 +83,12 @@ public class PuntoVenditaListener implements ActionListener {
             String data=JOptionPane.showInputDialog(null,"Inserisci data di nascita");
             if(data == null || "".equals(data))
                 return;
-            SimpleDateFormat parser = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
-            Date date = parser.parse(data);
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedDate = formatter.format(date);
-            Date datan=parser.parse(formattedDate);
-            manager.setDataNascita(datan.toString());
+//            SimpleDateFormat parser = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+//            Date date = parser.parse(data);
+//            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//            String formattedDate = formatter.format(date);
+//            Date datan=parser.parse(formattedDate);
+            manager.setDataNascita(data);
         }catch (Exception exception){
             JOptionPane.showMessageDialog(null,"Data non valida");
             return;
@@ -110,17 +113,19 @@ public class PuntoVenditaListener implements ActionListener {
         if(password == null || "".equals(password))
             return;
         manager.setPassword(password);
-        String cittaM=JOptionPane.showInputDialog(null,"Inserisci la città del punto vendita");
+        String cittaM=JOptionPane.showInputDialog(null,"Inserisci la città del manager");
         if(cittaM == null || "".equals(cittaM))
             return;
         manager.setCitta(cittaM);
-        String indirizzoM=JOptionPane.showInputDialog(null,"Inserisci l'indirizzo del punto vendita");
+        String indirizzoM=JOptionPane.showInputDialog(null,"Inserisci l'indirizzo del manager");
         if(indirizzoM == null || "".equals(indirizzoM))
             return;
         manager.setIndirizzo(indirizzoM);
         utenteDAO.add(manager);
+        ArrayList<IUtente> listaUtenti = UtenteDAO.getInstance().findAll();
+        puntoVendita.setManager(UtenteDAO.getInstance().findById(listaUtenti.get(listaUtenti.size() - 1).getId()));
 
-
+/*
         boolean fine=false;
         int i=0;
         while (!fine){
@@ -143,7 +148,46 @@ public class PuntoVenditaListener implements ActionListener {
                 JOptionPane.showMessageDialog(null,"Errore: l'id deve essere un numero intero ");
             }
 
+
+
         }
+
+ */
+        PuntoVenditaDAO.getInstance().add(puntoVendita);
+        ArrayList<IPuntoVendita> list = PuntoVenditaDAO.getInstance().findAll();
+        puntoVendita.setId(list.get(list.size() -1).getId());
+        boolean fine=false;
+        int i=0;
+        while (!fine){
+            try {
+                String idS=JOptionPane.showInputDialog(null,"Inserisci id del prodotto da inserire nel catalogo o fine per fermare l'inserimento");
+                if("fine".equalsIgnoreCase(idS)){
+                    fine=true;
+                }else {
+                    int id=Integer.parseInt(idS);
+                    IProdotto prodottoCercato = (IProdotto) prodottoDAO.findById(id);
+                    System.out.println(id);
+                    System.out.println(prodottoCercato);
+                    if(prodottoCercato==null){
+                        JOptionPane.showMessageDialog(null,"Il prodotto non esiste");
+                    }else {
+                        i=Integer.parseInt(JOptionPane.showInputDialog(null,"Inserisci quantità del prodotto"));
+                        puntoVendita.getProdottiVenduti().put(prodottoCercato,i);
+                        PuntoVenditaDAO.getInstance().addProdottoVenduto(puntoVendita, prodottoCercato, i);
+                    }
+
+                }
+
+            }catch (Exception exception){
+                JOptionPane.showMessageDialog(null,exception.getMessage());
+            }
+
+            JOptionPane.showMessageDialog(null,"Punto vendita creato correttamente");
+
+        }
+
+
+
 
 
     }

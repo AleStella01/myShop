@@ -7,16 +7,20 @@ import View.Listener.ListaListener;
 import View.ViewModel.RigaCatalogo;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class ClienteMenuDecorator extends CustomMenuDecorator {
 
-   // private GuestMenu menu;
+    private JPanel centro;
 
 
 
-    public ClienteMenuDecorator(Menu menu) {
+
+    public ClienteMenuDecorator(Menu menu,JPanel centro) {
          this.menu = menu;
+         this.centro=centro;
 
     }
 
@@ -33,6 +37,18 @@ public class ClienteMenuDecorator extends CustomMenuDecorator {
 
 
         // + le funzioni del cliente
+
+        JButton home=new JButton("Home");
+        home.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame finestra=((GuestMenu) menu).getFinestra();
+                centro.removeAll();
+                finestra.repaint();
+                finestra.revalidate();
+            }
+        });
+
         JButton liste = new JButton("Le mie liste");
         ListaListener listaListener=new ListaListener();
         liste.addActionListener(listaListener);
@@ -49,6 +65,7 @@ public class ClienteMenuDecorator extends CustomMenuDecorator {
 
 
         //action command, listener...
+        pulsanti.add(home);
         pulsanti.add(liste);
         pulsanti.add(carrello);
         pulsanti.add(mostraCommenti);

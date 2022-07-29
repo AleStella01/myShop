@@ -2,6 +2,7 @@ package View.Listener;
 
 import Business.SessionManager;
 import DAO.CommentoDAO;
+import DAO.ListaAcquistoDAO;
 import Model.*;
 import View.ViewModel.RigaCatalogo;
 
@@ -27,11 +28,6 @@ public class FinestraCommentListener implements ActionListener {
     public FinestraCommentListener() {
 
     }
-
-
-
-
-
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -50,11 +46,6 @@ public class FinestraCommentListener implements ActionListener {
            tipo="Amministratore";
         }
 
-
-
-
-
-
         JPanel nord=new JPanel();
         JPanel sud=new JPanel();
         JPanel east=new JPanel();
@@ -65,7 +56,9 @@ public class FinestraCommentListener implements ActionListener {
         sud.setLayout(new FlowLayout());
         east.setLayout(new FlowLayout());
         west.setLayout(new FlowLayout());
-        centro.setLayout(new FlowLayout());
+        centro.setLayout(new GridLayout(commenti.size()+1,6));
+
+        JScrollPane scrollPane=new JScrollPane(centro);
 
         JFrame finestra=new JFrame();
         finestra.setSize(600,700);
@@ -76,31 +69,55 @@ public class FinestraCommentListener implements ActionListener {
         c.add(sud,BorderLayout.SOUTH);
         c.add(east,BorderLayout.EAST);
         c.add(west,BorderLayout.WEST);
-        c.add(centro,BorderLayout.CENTER);
+        //c.add(centro,BorderLayout.CENTER);
+        c.add(scrollPane,BorderLayout.CENTER);
 
         ListIterator<Commento> iterator=commenti.listIterator();
+        centro.add(new JLabel("COMMENTO DI:  "));
+        centro.add(new JLabel("PRODOTTI ACQUISTATI "));
+        centro.add(new JLabel("SERVIZI ACQUISTATI  "));
+        centro.add(new JLabel("NUMERO STELLE "));
+        centro.add(new JLabel("TESTO COMMENTO "));
+        centro.add(new JLabel("RISPOSTA"));
+
         while (iterator.hasNext()){
+            String nomiProdotti="";
+            String nomiServizi="";
             Commento commento1=iterator.next();
-            centro.add(new JLabel("Commento di: "+ commento1.getCliente().getUsername()));
-            centro.add(new JLabel("  Prodotti acquistati: "));
+            centro.add(new JLabel( commento1.getCliente().getUsername()));
+
+            Map<IProdotto, Integer> prodotti = ListaAcquistoDAO.getInstance().getProdotti(commento1.getListaAcquisto());
+            Iterator<Map.Entry<IProdotto, Integer>> iterator1 = prodotti.entrySet().iterator();
+            while (iterator1.hasNext()){
+                Map.Entry<IProdotto, Integer> entry = iterator1.next();
+                commento1.getListaAcquisto().addProdotto(entry.getKey(), entry.getValue());
+            }
+
+            List<IArticolo> servizi1 = ListaAcquistoDAO.getInstance().getServizi(commento1.getListaAcquisto());
+            ListIterator<IArticolo> listIterator = servizi1.listIterator();
+            while (listIterator.hasNext()){
+                commento1.getListaAcquisto().addServizio(listIterator.next());
+            }
+
             Iterator<Map.Entry<IProdotto, Integer>> prodottiIterator = commento1.getListaAcquisto().getProdotti().entrySet().iterator();
             while (prodottiIterator.hasNext()){
                 Map.Entry<IProdotto,Integer> prodotto = prodottiIterator.next();
-                centro.add(new JLabel(prodotto.getKey().getNome() + ", "));
+               nomiProdotti= nomiProdotti + "" + prodotto.getKey().getNome() + ",\n " ;
             }
-            centro.add(new JLabel("  Servizi acquistati: "));
+            centro.add(new JLabel(nomiProdotti));
             if(commento1.getListaAcquisto().getServizi().size()==0){
-                centro.add(new JLabel(" Nessun servizio"));
+               nomiServizi="Nessun Servizio";
             }else {
                 ListIterator<IArticolo> servizi = commento1.getListaAcquisto().getServizi().listIterator();
                 while (servizi.hasNext()){
                     IArticolo servizio = servizi.next();
-                    centro.add(new JLabel(servizio.getNome() + ", "));
+                  nomiServizi = nomiServizi + "" + servizio.getNome() + ", \n";
                 }
             }
+            centro.add(new JLabel(nomiServizi));
 
-            centro.add(new JLabel("    Numero di stelle: " + commento1.getNumeroStelle()));
-            centro.add(new JLabel("   Testo del commento : " + commento1.getTesto()) );
+            centro.add(new JLabel(String.valueOf(commento1.getNumeroStelle())));
+            centro.add(new JLabel ( commento1.getTesto()) );
             //centro.add(new JLabel( commento1.getTesto()) );
             String stato;
             if(commento1.isRisposto()){
@@ -108,9 +125,9 @@ public class FinestraCommentListener implements ActionListener {
             }else {
                 stato="Non risposto";
             }
-            centro.add(new JLabel("  Stato risposta: " + stato));
+            //centro.add(new JLabel("  Stato risposta: " + stato));
             if(commento1.isRisposto()){
-                centro.add(new JLabel("  Risposta: " + commento1.getTestoRisposta()));
+                centro.add(new JLabel( commento1.getTestoRisposta()));
             }else {
                 if(u instanceof Manager){
                     JButton rispondi=new JButton("Rispondi");
@@ -118,7 +135,7 @@ public class FinestraCommentListener implements ActionListener {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             String risposta=JOptionPane.showInputDialog(null,"Inserisci risposta");
-                            commento1.setTestoRisposta(u.getUsername()+"- "+ tipo + " : " + risposta);
+                            commento1.setTestoRisposta(risposta);
                             commento1.setRisposto(true);
                             commentoDAO.update(commento1);
                             finestra.revalidate();

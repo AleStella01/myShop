@@ -137,34 +137,7 @@ public class ModificaArticoloListener implements ActionListener {
                                         @Override
                                         public void actionPerformed(ActionEvent e) {
                                             String campo =  jComboBox.getItemAt(jComboBox.getSelectedIndex());
-                                            if("ID".equals(campo)){
-                                                try {
-                                                    String idS= JOptionPane.showInputDialog(null,"Inserisci l'ID del prodotto che vuoi modificare");
-                                                    int id=Integer.parseInt(idS);
-                                                    boolean trovato= false;
-                                                    List<IArticolo> prodotti=prodottoDAO.findAll();
-                                                    ListIterator<IArticolo> prodottiIterator=prodotti.listIterator();
-                                                    while (prodottiIterator.hasNext()){
-                                                        Prodotto prodotto1=(Prodotto) prodottiIterator.next();
-                                                        if (id == prodotto1.getId()){
-                                                            trovato=true;
-                                                        }
-                                                    }
-                                                    if(!trovato){
-                                                        prodotto.setId(id);
-                                                    }
-                                                    else{
-                                                        JOptionPane.showMessageDialog(null,"L'ID inserito esiste già");
-                                                        return;
-                                                    }
-                                                    JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
-                                                    prodottoDAO.update(prodotto);
-                                                }catch (Exception exception){
-                                                    JOptionPane.showMessageDialog(null,"L'ID deve essere un numero intero");
-                                                    return;
-                                                }
-                                            }
-                                            else if ("Nome".equals(campo)){
+                                            if ("Nome".equals(campo)){
                                                 String nome= JOptionPane.showInputDialog(null,"Inserisci il nome del prodotto che vuoi modificare");
                                                 if(nome == null || "".equals(nome))
                                                     return;
@@ -282,6 +255,7 @@ public class ModificaArticoloListener implements ActionListener {
                                                 if(descrizione == null || "".equals(descrizione))
                                                     return;
                                                 prodotto.setDescrizione(descrizione);
+                                                JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
                                                 prodottoDAO.update(prodotto);
                                             }else if("Collocazione".equalsIgnoreCase(campo)){
                                                 String corsia=JOptionPane.showInputDialog(null,"Inserisci nome corsia");
@@ -308,6 +282,7 @@ public class ModificaArticoloListener implements ActionListener {
                                                                 collocazioneProdotto.setScaffale(scaffale2);
                                                                 CollocazioneDAO.getInstance().add(collocazioneProdotto);
                                                                 prodotto.setCollocazione(collocazioneProdotto);
+                                                                JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
                                                                 prodottoDAO.update(prodotto);
                                                             }catch (Exception exception){
                                                                 JOptionPane.showMessageDialog(null,"Lo scaffale deve essere un numero intero");
@@ -403,35 +378,7 @@ public class ModificaArticoloListener implements ActionListener {
                                         public void actionPerformed(ActionEvent e) {
                                             String campo =  jComboBox.getItemAt(jComboBox.getSelectedIndex());
 
-                                            if("ID".equalsIgnoreCase(campo)){
-                                                try {
-                                                    String idS=JOptionPane.showInputDialog(null,"Inserisci ID servizio");
-                                                    int id=Integer.parseInt(idS);
-                                                    boolean trovato= false;
-                                                    List<IArticolo> servizi=servizioDAO.findAll();
-                                                    ListIterator<IArticolo> serviziIterator=servizi.listIterator();
-                                                    while (serviziIterator.hasNext()){
-                                                        Servizio servizio1=(Servizio) serviziIterator.next();
-                                                        if (id == servizio1.getId()){
-                                                            trovato=true;
-                                                        }
-                                                    }
-                                                    if(!trovato){
-                                                        servizio.setId(id);
-                                                    }
-                                                    else{
-                                                        JOptionPane.showMessageDialog(null,"L'ID inserito esiste già");
-                                                        return;
-                                                    }
-
-                                                }
-                                                catch (Exception exception){
-                                                    JOptionPane.showMessageDialog(null,"Errore, prodotto non creato: L'ID del prodotto deve essere un numero intero");
-                                                    return;
-                                                }
-                                                servizioDAO.update(servizio);
-
-                                            }else if("Nome".equalsIgnoreCase(campo)){
+                                             if("Nome".equalsIgnoreCase(campo)){
                                                 String nome=JOptionPane.showInputDialog(null,"Inserisci nome servizio");
                                                 if(nome == null || "".equals(nome))
                                                     return;
@@ -455,6 +402,7 @@ public class ModificaArticoloListener implements ActionListener {
                                                 if(descrizione == null || "".equals(descrizione))
                                                     return;
                                                 servizio.setDescrizione(descrizione);
+                                                JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
                                                 servizioDAO.update(servizio);
 
                                             }else if("Categoria".equalsIgnoreCase(campo)){
@@ -508,7 +456,7 @@ public class ModificaArticoloListener implements ActionListener {
 
 
 
-                }/*else if ("Prodotto Composito".equals(scelta)){
+                }else if ("Prodotto Composito".equals(scelta)){
                     ProdottoCompositoDAO prodottoCompositoDAO=ProdottoCompositoDAO.getInstance();
                     int id=0;
                     try {
@@ -541,11 +489,13 @@ public class ModificaArticoloListener implements ActionListener {
                             RigaCatalogo riga=new RigaCatalogo();
                             riga.setIdProdotto(prodottoComposito.getId());
                             riga.setNomeProdotto(prodottoComposito.getNome());
-                            riga.setNomeProduttore(prodottoComposito.getProduttore().getNomeProduttore());
+                            riga.setNomeProduttore("MyShop");
                             riga.setNomeCategoria(prodottoComposito.getCategoria().getNome());
                             riga.setPrezzo(prodottoComposito.getPrezzo());
                             riga.setProdottoComposito("Si");
                             riga.setProdotti(visualizzaProdotti);
+                            riga.setCorsia("//");
+                            riga.setScaffale(0);
 
 
 
@@ -574,7 +524,7 @@ public class ModificaArticoloListener implements ActionListener {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
 
-                                    String[] optionsToChoose = {"ID", "Nome", "Produttore", "Categoria", "Prezzo","Immagine","Descrizione","Collocazione"};
+                                    String[] optionsToChoose = { "Nome", "Categoria", "Prezzo","Immagine","Descrizione"};
 
                                     JFrame jFrame2 = new JFrame();
 
@@ -599,84 +549,13 @@ public class ModificaArticoloListener implements ActionListener {
                                         @Override
                                         public void actionPerformed(ActionEvent e) {
                                             String campo =  jComboBox.getItemAt(jComboBox.getSelectedIndex());
-                                            if("ID".equals(campo)){
-                                                try {
-                                                    String idS= JOptionPane.showInputDialog(null,"Inserisci l'ID del prodotto che vuoi modificare");
-                                                    int id=Integer.parseInt(idS);
-                                                    boolean trovato= false;
-                                                    List<IArticolo> prodotti=prodottoCompositoDAO.findAll();
-                                                    ListIterator<IArticolo> prodottiIterator=prodotti.listIterator();
-                                                    while (prodottiIterator.hasNext()){
-                                                        Prodotto prodotto1=(Prodotto) prodottiIterator.next();
-                                                        if (id == prodotto1.getId()){
-                                                            trovato=true;
-                                                        }
-                                                    }
-                                                    if(!trovato){
-                                                        prodottoComposito.setId(id);
-                                                    }
-                                                    else{
-                                                        JOptionPane.showMessageDialog(null,"L'ID inserito esiste già");
-                                                        return;
-                                                    }
-                                                    JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
-                                                    prodottoCompositoDAO.update(prodottoComposito);
-                                                }catch (Exception exception){
-                                                    JOptionPane.showMessageDialog(null,"L'ID deve essere un numero intero");
-                                                    return;
-                                                }
-                                            }
-                                            else if ("Nome".equals(campo)){
+                                            if ("Nome".equals(campo)){
                                                 String nome= JOptionPane.showInputDialog(null,"Inserisci il nome del prodotto che vuoi modificare");
                                                 if(nome == null || "".equals(nome))
                                                     return;
                                                 prodottoComposito.setNome(nome);
                                                 JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
                                                 prodottoCompositoDAO.update(prodottoComposito);
-                                            }
-                                            else if("Produttore".equals(campo)){
-                                                String nomeP= JOptionPane.showInputDialog(null,"Inserisci il produttore del prodotto che vuoi modificare");
-                                                if(nomeP == null || "".equals(nomeP))
-                                                    return;
-
-                                                IProduttore produttoreI=produttoreDAO.findByName(nomeP);
-                                                ProduttoreMobili produttore=(ProduttoreMobili) produttoreI;
-                                                if(produttoreI==null){
-                                                    String message=JOptionPane.showInputDialog(null,"Il produttore non esiste, lo vuoi creare? Inserisici si per continuare oppure qualcos'altro per terminare");
-                                                    if("si".equalsIgnoreCase(message)){
-                                                        ProduttoreFactoryProvider.ProduttoreType typePr= ProduttoreFactoryProvider.ProduttoreType.PRODUTTORE_MOBILI;
-                                                        ProduttoreAbstractFactory factoryPr=ProduttoreFactoryProvider.getFactory(typePr);
-                                                        ProduttoreMobili produttore1=(ProduttoreMobili) factoryPr.crea();
-                                                        String nomeProduttore1=JOptionPane.showInputDialog(null,"Inserisci nome produttore");
-                                                        if(nomeProduttore1 == null || "".equals(nomeProduttore1))
-                                                            return;
-                                                        produttore1.setNomeProduttore(nomeProduttore1);
-                                                        String nomeCitta=JOptionPane.showInputDialog(null,"Inserisci nome Città");
-                                                        if(nomeCitta == null || "".equals(nomeCitta))
-                                                            return;
-                                                        produttore1.setCitta(nomeCitta);
-                                                        String nazione=JOptionPane.showInputDialog(null,"Inserisci nazione");
-                                                        if(nazione == null || "".equals(nazione))
-                                                            return;
-                                                        produttore1.setNazione(nazione);
-                                                        String url=JOptionPane.showInputDialog(null,"Inserisci URL");
-                                                        if(url == null || "".equals(url))
-                                                            return;
-                                                        produttore1.setSitoWeb(url);
-                                                        prodottoComposito.setProduttore(produttore1);
-                                                        produttoreI= produttore1;
-                                                        produttoreDAO.add(produttoreI);
-                                                        prodottoCompositoDAO.update(prodottoComposito);
-                                                        JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
-                                                    }else {
-                                                        return;
-                                                    }
-                                                }else {
-                                                    prodottoComposito.setProduttore(produttore);
-                                                    prodottoCompositoDAO.update(prodottoComposito);
-                                                    JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
-                                                }
-
                                             }
                                             else if("Categoria".equals(campo)){
                                                 String nomeC= JOptionPane.showInputDialog(null,"Inserisci la categoria del prodotto che vuoi modificare");
@@ -742,52 +621,8 @@ public class ModificaArticoloListener implements ActionListener {
                                             }else if ("Descrizione".equals(campo)){
                                                 String descrizione=JOptionPane.showInputDialog(null,"Inserisci la nuova descrizione");
                                                 prodottoComposito.setDescrizione(descrizione);
+                                                JOptionPane.showMessageDialog(null,"Prodotto modificato con successo");
                                                 prodottoCompositoDAO.update(prodottoComposito);
-                                            }else if("Collocazione".equalsIgnoreCase(campo)){
-
-                                                String corsia=JOptionPane.showInputDialog(null,"Inserisci nome corsia");
-                                                if(corsia== null || "".equals(corsia))
-                                                    return;
-                                                int scaffale=0;
-                                                try {
-                                                    String scaffaleS=JOptionPane.showInputDialog(null,"Inserisci scaffale");
-                                                    scaffale=Integer.parseInt(scaffaleS);
-                                                    Collocazione collocazione=collocazioneDAO.findByCorsiaEScaffale(corsia,scaffale);
-                                                    if(collocazione==null){
-                                                        String message=JOptionPane.showInputDialog(null,"La collocazione inserita non esiste non esiste, la vuoi creare? Inserisci si per crearla o qualcos'altro per terminare");
-                                                        if("si".equalsIgnoreCase(message)){
-                                                            String corsia1=JOptionPane.showInputDialog(null,"Inserisci nome corsia");
-                                                            if(corsia1 == null || "".equals(corsia1))
-                                                                return;
-                                                            try {
-                                                                String scaffale1=JOptionPane.showInputDialog(null,"Inserisci scaffale");
-                                                                int scaffale2=Integer.parseInt(scaffale1);
-                                                                CollocazioneFactory.CollocazioneType type1= CollocazioneFactory.CollocazioneType.MAGAZZINO;
-                                                                CollocazioneFactory factory1=new CollocazioneFactory();
-                                                                CollocazioneProdotto collocazioneProdotto = (CollocazioneProdotto) factory1.getCollocazione(type1);
-                                                                collocazioneProdotto.setCorsia(corsia1);
-                                                                collocazioneProdotto.setScaffale(scaffale2);
-                                                                CollocazioneDAO.getInstance().add(collocazioneProdotto);
-                                                                prodottoComposito.setCollocazione(collocazioneProdotto);
-                                                                prodottoCompositoDAO.update(prodottoComposito);
-                                                            }catch (Exception exception){
-                                                                JOptionPane.showMessageDialog(null,"Lo scaffale deve essere un numero intero");
-                                                                return;
-                                                            }
-                                                        }else {
-                                                            return;
-                                                        }
-                                                    }else {
-                                                        prodottoComposito.setCollocazione((CollocazioneProdotto) collocazione);
-                                                        prodottoCompositoDAO.update(prodottoComposito);
-                                                    }
-
-                                                }catch (Exception exception){
-                                                    JOptionPane.showMessageDialog(null,"Lo scaffale deve essere un numero intero");
-                                                    return;
-                                                }
-
-
                                             }
                                         }
                                     });
@@ -821,7 +656,7 @@ public class ModificaArticoloListener implements ActionListener {
 
 
                 }
-                */
+
 
             }
         });

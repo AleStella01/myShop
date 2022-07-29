@@ -105,7 +105,7 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
     public int add(IArticolo articolo) {
         ProdottoComposito prodotto1 = (ProdottoComposito) articolo;
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "INSERT INTO myShop.prodotto (nome, costo, descrizione, main_composito, categoria_idcategoria, collocazione_idcollocazione, produttore_idproduttore) VALUES ('" + articolo.getNome() + "', " + articolo.getPrezzo() + ", '" + articolo.getDescrizione() + "', 1, " + articolo.getCategoria().getId() + ", " + prodotto1.getCollocazione().getId() + ", " + prodotto1.getProduttore().getId() + ");";
+        String sql = "INSERT INTO myShop.prodotto (nome, costo, descrizione, main_composito, categoria_idcategoria, collocazione_idcollocazione, produttore_idproduttore) VALUES ('" + articolo.getNome() + "', " + articolo.getPrezzo() + ", '" + articolo.getDescrizione() + "', 1, " + articolo.getCategoria().getId() + ", 3, 5);";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
         try {
@@ -148,7 +148,7 @@ public class ProdottoCompositoDAO implements IArticoloDAO{
     public int update(IArticolo articolo) {
         ProdottoComposito prodotto1 = (ProdottoComposito) articolo;
         DbOperationExecutor executor = new DbOperationExecutor();
-        String sql = "UPDATE myShop.prodotto SET nome = '" + articolo.getNome() + "', costo = " + articolo.getPrezzo() + ", descrizione = '" + articolo.getDescrizione() + "', categoria_idcategoria = " + articolo.getCategoria().getId() + ", collocazione_idcollocazione = " + prodotto1.getCollocazione().getId() + ", produttore_idproduttore = " + prodotto1.getProduttore().getId() + " WHERE idprodotto = " + articolo.getId() + ";";
+        String sql = "UPDATE myShop.prodotto SET nome = '" + articolo.getNome() + "', costo = " + articolo.getPrezzo() + ", descrizione = '" + articolo.getDescrizione() + "', categoria_idcategoria = " + articolo.getCategoria().getId() + ", collocazione_idcollocazione = 3, produttore_idproduttore = 5 WHERE idprodotto = " + articolo.getId() + ";";
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
 

@@ -28,13 +28,14 @@ public class DocumentoListaAcquisto extends Documento{
         Iterator<IProdotto> i = prodotti.keySet().iterator();
         while (i.hasNext()){
             IProdotto p = i.next();
-            text += p.getNome() + ", ";
+            text += p.getNome() + ", " + p.getPrezzo() + ", " + p.getProduttore().getNomeProduttore() + ", " + p.getCategoria().getNome();
         }
 
         try {
             File tempFile = File.createTempFile("myShop", ".pdf");
             System.out.println(tempFile);
             pdfAPI.creaPdf(text, tempFile.getAbsolutePath());
+            //MailHelper.getInstance().send("nicdepascali@gmail.com", "Lista Acquisto MyShop", "Ti inoltriamo la lista d'acquisto MyShop" + pdfAPI);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

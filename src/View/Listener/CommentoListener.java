@@ -23,6 +23,12 @@ public class CommentoListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        if(!listaAcquisto.isPagato()){
+            JOptionPane.showMessageDialog(null,"Paga la lista per poter commentare");
+            return;
+        }
+
         CommentoDAO commentoDAO=CommentoDAO.getInstance();
         List<IProdotto> prodottiEffettivi=new ArrayList<>();
         prodottiEffettivi.addAll(listaAcquisto.getProdotti().keySet());

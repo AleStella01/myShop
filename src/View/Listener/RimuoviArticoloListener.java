@@ -1,9 +1,7 @@
 package View.Listener;
 
 import DAO.*;
-import Model.IArticolo;
-import Model.Prodotto;
-import Model.Servizio;
+import Model.*;
 
 import View.CatalogoPanel;
 import View.SchiedaArticoloTableModel;
@@ -25,7 +23,7 @@ public class RimuoviArticoloListener implements ActionListener {
         CategoriaDAO categoriaDAO=CategoriaDAO.getInstance();
         CollocazioneDAO collocazioneDAO=CollocazioneDAO.getInstance();
 
-        String[] optionsToChoose = {"Prodotto","Prodotto Composito", "Servizio"};
+        String[] optionsToChoose = {"Prodotto", "Prodotto Composito", "Servizio"};
 
         JFrame jFrame = new JFrame();
 
@@ -82,6 +80,10 @@ public class RimuoviArticoloListener implements ActionListener {
                             riga.setNomeProduttore(prodotto.getProduttore().getNomeProduttore());
                             riga.setNomeCategoria(prodotto.getCategoria().getNome());
                             riga.setPrezzo(prodotto.getPrezzo());
+                            riga.setProdottoComposito("No");
+                            riga.setCorsia(prodotto.getCollocazione().getCorsia());
+                            riga.setScaffale(prodotto.getCollocazione().getScaffale());
+                            riga.setProdotti("//");
 
                             righeCercate.add(riga);
 
@@ -183,7 +185,7 @@ public class RimuoviArticoloListener implements ActionListener {
 
 
 
-                }/*else if ("Prodotto Composito".equals(scelta)){
+                }else if ("Prodotto Composito".equals(scelta)){
                     ProdottoCompositoDAO prodottoCompositoDAO= ProdottoCompositoDAO.getInstance();
 
                     int id=0;
@@ -219,8 +221,9 @@ public class RimuoviArticoloListener implements ActionListener {
                             riga.setNomeProduttore(prodottoComposito.getProduttore().getNomeProduttore());
                             riga.setNomeCategoria(prodottoComposito.getCategoria().getNome());
                             riga.setPrezzo(prodottoComposito.getPrezzo());
-                            riga.setProdottoComposito("No");
+                            riga.setProdottoComposito("SI");
                             riga.setProdotti(visualizzaProdotti);
+
 
                             righeCercate.add(riga);
 
@@ -264,7 +267,7 @@ public class RimuoviArticoloListener implements ActionListener {
 
 
                 }
-                */
+
 
 
             }

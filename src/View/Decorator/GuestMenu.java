@@ -29,11 +29,8 @@ public class GuestMenu extends Menu {
 
     }
 
-    public JPanel getCatalogo() {
-        return catalogo;
+    public JFrame getFinestra() {
+        return finestra;
     }
 
-    public void setCatalogo(JPanel catalogo) {
-        this.catalogo = catalogo;
-    }
 }

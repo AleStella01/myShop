@@ -17,7 +17,6 @@ public class PdfBoxAPI implements PdfAPI{
             doc.addPage(page);
 
             PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
-            //TODO inserire codice per l'immagine
             try (PDPageContentStream contents = new PDPageContentStream(doc, page))
             {
                 contents.beginText();

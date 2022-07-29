@@ -1,5 +1,6 @@
 package View.Listener;
 
+import DAO.PuntoVenditaDAO;
 import DAO.UtenteDAO;
 import Model.Cliente;
 import Model.IUtente;
@@ -21,17 +22,8 @@ public class GestireAcquirentiListener implements ActionListener {
         utenti=uDao.findAll();
         List<Utente> clienti=new ArrayList<>();
         boolean isCliente=false;
-        ListIterator<IUtente> utenteListIterator= utenti.listIterator();
-        while (utenteListIterator.hasNext()){
-            Utente utente=(Utente) utenteListIterator.next();
-            isCliente=false;
-            if(utente instanceof Cliente){
-                isCliente=true;
-            }
-            if(isCliente){
-                clienti.add(utente);
-            }
-        }
+        IUtente cliente=null;
+
         int id=0;
         try{
             String idS= JOptionPane.showInputDialog(null,"Inserisci l'id del cliente che vuoi rimuovere");
@@ -42,22 +34,12 @@ public class GestireAcquirentiListener implements ActionListener {
             return;
 
         }
-        ListIterator<Utente> clientiIterator= clienti.listIterator();
-        boolean trovato=false;
-        while (clientiIterator.hasNext()){
-            Utente utente=clientiIterator.next();
-            if(id == utente.getId()){
-                trovato=true;
-                clienti.remove(utente);
-                uDao.removeById(utente.getUsername());
-                JOptionPane.showMessageDialog(null,"Il cliente è stato eliminato con successo");
-                break;
-            }
-
+        cliente=uDao.findById(id);
+        uDao.removeById(cliente.getUsername());
+        if (cliente == null){
+            JOptionPane.showMessageDialog(null,"Id non esistente");
+        }else {
+            JOptionPane.showMessageDialog(null,"Cliente eliminato con successo");
         }
-        if (!trovato){
-            JOptionPane.showMessageDialog(null,"Errore: L'id inserito non esiste");
-        }
-
     }
 }

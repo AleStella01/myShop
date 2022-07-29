@@ -1,9 +1,11 @@
 package Model;
 
+import Business.MailHelper;
+
 public class NotificaEmail extends Notifica{
     @Override
     public boolean inviaNotifica() {
-        System.out.println("Invio tramite email");
+        MailHelper.getInstance().send("nicdepascali@gmail.com", "Lista acquisto MyShop", "Ti inoltriamo la lista d'acquisto di myShop");
         return true;
     }
 

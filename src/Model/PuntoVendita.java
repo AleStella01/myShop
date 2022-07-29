@@ -1,5 +1,6 @@
 package Model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class PuntoVendita implements IPuntoVendita {
         this.citta = null;
         this.indirizzo = null;
         this.manager = null;
-        this.prodottiVenduti = null;
+        this.prodottiVenduti = new HashMap<>();
     }
 
     public PuntoVendita(String nome, String citta, String indirizzo, IUtente manager, Map prodottiVenduti) {

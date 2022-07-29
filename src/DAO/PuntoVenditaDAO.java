@@ -181,22 +181,22 @@ public class PuntoVenditaDAO implements IPuntoVenditaDAO{
                 puntoVendita.setIndirizzo(rs.getString("indirizzo"));
                 puntoVendita.setManager(UtenteDAO.getInstance().findById(rs.getInt("utente_idutente")));
 
-                sql = "SELECT prodotto_idprodotto, quantita FROM puntoVendita_has_prodotto AS pv INNER JOIN prodotto AS p ON p.idprodotto = pv.prodotto_idprodotto WHERE p.main_composito = 0 AND puntoVendita_idpuntoVendita = " + puntoVendita.getId() + ";";
-                readOp = new ReadOperation(sql);
-                rs = executor.executeOperation(readOp).getResultSet();
-                Map<IProdotto, Integer> prodottiVenduti = new HashMap<>();
-                while (rs.next()){
-                    prodottiVenduti.put((IProdotto) ProdottoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantita"));
-                }
-
-//                sql = "SELECT prodotto_idprodotto, quantità FROM puntoVendita_has_prodotto AS pv INNER JOIN prodotto AS p ON p.idprodotto = pv.prodotto_idprodotto WHERE p.main_composito = 1 AND puntoVendita_idpuntoVendita = " + puntoVendita.getId() + ";";
+//                sql = "SELECT prodotto_idprodotto, quantita FROM puntoVendita_has_prodotto AS pv INNER JOIN prodotto AS p ON p.idprodotto = pv.prodotto_idprodotto WHERE p.main_composito = 0 AND puntoVendita_idpuntoVendita = " + puntoVendita.getId() + ";";
 //                readOp = new ReadOperation(sql);
 //                rs = executor.executeOperation(readOp).getResultSet();
+//                Map<IProdotto, Integer> prodottiVenduti = new HashMap<>();
 //                while (rs.next()){
-//                    prodottiVenduti.put((IProdotto) ProdottoCompositoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantita"));
+//                    prodottiVenduti.put((IProdotto) ProdottoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantita"));
 //                }
-                puntoVendita.setProdottiVenduti(prodottiVenduti);
-                puntiVendita.add(puntoVendita);
+//
+//                sql = "SELECT prodotto_idprodotto, quantita FROM puntoVendita_has_prodotto AS pv INNER JOIN prodotto AS p ON p.idprodotto = pv.prodotto_idprodotto WHERE p.main_composito = 1 AND puntoVendita_idpuntoVendita = " + puntoVendita.getId() + ";";
+//                readOp = new ReadOperation(sql);
+//                rs = executor.executeOperation(readOp).getResultSet();
+//               while (rs.next()){
+//                   prodottiVenduti.put((IProdotto) ProdottoCompositoDAO.getInstance().findById(rs.getInt("prodotto_idprodotto")), rs.getInt("quantita"));
+//               }
+//               puntoVendita.setProdottiVenduti(prodottiVenduti);
+               puntiVendita.add(puntoVendita);
             }
             return puntiVendita;
         } catch (SQLException e) {
@@ -214,7 +214,7 @@ public class PuntoVenditaDAO implements IPuntoVenditaDAO{
         IDbOperation writeOp = new WriteOperation(sql);
         rs = executor.executeOperation(writeOp).getResultSet();
 
-        Iterator<Map.Entry<IProdotto, Integer>> iterator = puntoVendita.getProdottiVenduti().entrySet().iterator();
+//        Iterator<Map.Entry<IProdotto, Integer>> iterator = puntoVendita.getProdottiVenduti().entrySet().iterator();
         try {
             int rowCount = rs.getRow();
             return rowCount;
